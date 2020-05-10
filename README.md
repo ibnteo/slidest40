@@ -1,6 +1,6 @@
 # Touch slide keyboard Slidest-40
 
-![](Layout/eng.png)
+![](Layout/layout.png)
 
 Size: 10x5 cm
 
@@ -17,8 +17,6 @@ Copy `Adafruit_MPR121.h` and `Adafruit_MPR121.cpp` files to `Arduino` directory.
 ---
 
 # Сенсорная слайдовая клавиатура Слайдость-40
-
-![](Layout/rus.png)
 
 Размер: 10х5 см
 
