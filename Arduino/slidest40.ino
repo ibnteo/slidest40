@@ -1,7 +1,7 @@
 /*
  * Touch slide keyboard Slidest40 (сенсорная слайдовая клавиатура Слайдость40)
- * Version: 0.3 beta
- * Date: 2020-05-10
+ * Version: 0.4 beta
+ * Date: 2020-05-11
  * Description: https://github.com/ibnteo/slidest40 (soon)
  * Author: Vladimir Romanovich <ibnteo@gmail.com>
  * License: MIT
@@ -142,30 +142,37 @@ ChordM chordm[] = {
   {S3(6,4,2), "tion"},
 };
 
-/*// Select layout 1
-#define CHORDL sizeof(chordl) / 3
-Chord chordl[] = {
-  {S5(2,1,3,4,2), '@'},
-  {S5(1,3,4,2,1), '#'},
-  {S4(1,3,5,3), '#'},
-  {S5(2,4,3,1,2), '$'},
-  {S5(4,2,1,3,4), '^'},
-  {S5(3,4,2,1,3), '&'},
-  {S4(5,3,4,6), '['},
-  {S4(6,4,3,5), {']', '}'}},
-  {S4(5,3,1,3), {'`', '~'}},
-  {S3(5,3,5), {0, '\''}},
-  {S3(1,3,1), {0, '|'}},
-  {S4(5,6,4,3), {0, '<'}},
-  {S4(6,5,3,4), {0, '>'}},
-};*/
+#define CHORDF sizeof(chordf) / 3
+Chord chordf[] {
+  {S2(1,2), KEY_F1},
+  {S2(2,1), KEY_F2},
+  {S2(1,3), KEY_F3},
+  {S2(2,4), KEY_F4},
+  {S2(3,1), KEY_F5},
+  {S2(4,2), KEY_F6},
+  {S2(3,4), KEY_F7},
+  {S2(4,3), KEY_F8},
+  {S2(3,5), KEY_F9},
+  {S2(4,6), KEY_F10},
+  {S2(5,6), KEY_F11},
+  {S2(6,5), KEY_F12},
+};
+
+#define CHORDT sizeof(chordt) / 3
+Chord chordt[] {
+  {S2(3,4), KEY_RIGHT_ARROW},
+  {S2(4,3), KEY_LEFT_ARROW},
+};
 
 #define KEY_LAYOUT 255
 #define KEY_LAYOUT_FUNC 254
 #define KEY_RESET_MODS 253
 byte layout = 0;
 byte mods = 0;
-bool layout_func = false;
+#define LAYOUT 0
+#define LAYOUT_FUNC 1
+#define LAYOUT_TAB 2
+byte mode = LAYOUT;
 
 // Controls
 #define CHORDC sizeof(chordc) / 3
@@ -179,9 +186,9 @@ Chord chordc[] = {
   {S2(6,5), KEY_LEFT_ARROW},
   {S2(5,6), KEY_RIGHT_ARROW},
   {S3(1,2,1), KEY_LAYOUT},
-  {S4(1,2,1,2), KEY_LAYOUT_FUNC},
+  {S4(1,2,1,3), KEY_LAYOUT_FUNC},
   {S2(4,2), KEY_LEFT_SHIFT},
-  {S3(4,3,4), KEY_TAB},
+  {S4(4,3,4,2), KEY_TAB},
   {S3(3,4,3), KEY_LEFT_CTRL},
   {S3(4,2,4), KEY_LEFT_ALT},
   {S4(4,2,4,6), KEY_LEFT_GUI},
@@ -195,9 +202,14 @@ Chord chordcc[] = {
   {S3(1,3,1), KEY_RETURN},
   {S3(5,6,5), KEY_RIGHT_ARROW},
   {S3(6,5,6), KEY_LEFT_ARROW},
+  {S3(4,3,4), KEY_TAB},
 };
 
 #define LED_LAYOUT LED_BUILTIN_RX
+void led_layout(bool light) {
+  digitalWrite(LED_LAYOUT, light ? LOW : HIGH); // LOW = light
+}
+
 #define LINUX   0
 #define WINDOWS 1
 #define MACOS   2
@@ -218,91 +230,126 @@ void layout2(byte layer) {
     Keyboard.releaseAll();
   }
   layout = layer;
-  digitalWrite(LED_LAYOUT, layout == 0 ? HIGH : LOW); // LOW = light
+  led_layout(layout != 0);
 }
 
-void releaseMods() {
+void release_mods() {
     Keyboard.releaseAll();
     mods = 0;
-    digitalWrite(LED_LAYOUT, layout == 0 ? HIGH : LOW); // LOW = light
+    led_layout(layout != 0);
 }
 
-void press(byte k) { // Press on release
+void chord_symbol(byte k) {
   for (uint8_t i = 0; i < CHORD; i ++) {
     if (touched.list[k].chord == chord[i].chord) {
       bool macros = false;
       if (chord[i].symbols[layout] == 0) { // Macros
         for (byte j = 0; j < CHORDM; j ++) {
           if (touched.list[k].chord == chordm[j].chord) {
-            releaseMods();
+            release_mods();
             Keyboard.print(chordm[j].macros);
             macros = true;
             break;
           }
         }
-        //for (byte j = 0; j < CHORDL; j ++) {
-          //if (touched.list[k].chord == chordl[j].chord) {
-            //byte m = (mods & (1 << (KEY_LEFT_SHIFT - KEY_LEFT_CTRL))) ? 1 : 0;
-            byte m = layout ? 0 : 1;
-            if (! macros && chord[i].symbols[m]) {
-              // TODO: save mods
-              layout2(layout ? 0 : 1);
-              // TODO: restore mods
-              //Keyboard.release(KEY_LEFT_SHIFT);
-              Keyboard.write(chord[i].symbols[m]);
-              layout2(layout ? 0 : 1);
-              releaseMods();
-            //}
-            //break;
-          //}
+        byte m = layout ? 0 : 1;
+        if (! macros && chord[i].symbols[m]) {
+          // TODO: save and clean mods
+          layout2(layout ? 0 : 1);
+          // TODO: restore mods
+          Keyboard.write(chord[i].symbols[m]);
+          layout2(layout ? 0 : 1);
+          release_mods();
         }
       } else {
-        //Keyboard.release(KEY_LEFT_SHIFT);
-        Keyboard.write(chord[i].symbols[layout]);
-        releaseMods();
+        if (! (mods && chord[i].symbols[layout] == ' ')) {
+          Keyboard.write(chord[i].symbols[layout]);
+        }
+        release_mods();
       }
       break;
     }
   }
-  /*if (l == 4) {
-    layout_func = false;
-    digitalWrite(LED_LAYOUT, layout != 0 ? LOW : HIGH); // LOW = light
-  } else {*/
-    for (uint8_t i = 0; i < CHORDC; i ++) { // Controls
-      if (touched.list[k].chord == chordc[i].chord) {
-        if (chordc[i].symbol == KEY_LAYOUT_FUNC) {
-          layout_func = ! layout_func;
-          digitalWrite(LED_LAYOUT, layout_func || layout != 0 ? LOW : HIGH); // LOW = light
-        } else if (chordc[i].symbol == KEY_LAYOUT) {
-          layout2(layout ? 0 : 1);
-        } else if (chordc[i].symbol == KEY_RESET_MODS) {
-          releaseMods();
-        } else if (chordc[i].symbol >= KEY_LEFT_CTRL && chordc[i].symbol <= KEY_RIGHT_GUI) {
-          byte mod = (1 << (chordc[i].symbol - KEY_LEFT_CTRL));
-          if (mods & mod) {
-            mods &= ~ mod;
-            Keyboard.release(chordc[i].symbol);
-          } else {
-            mods |= mod;
-            Keyboard.press(chordc[i].symbol);
-          }
-          digitalWrite(LED_LAYOUT, mods || layout != 0 ? LOW : HIGH); // LOW = light
+}
+
+void chord_control(byte k) {
+  for (uint8_t i = 0; i < CHORDC; i ++) { // Controls
+    if (touched.list[k].chord == chordc[i].chord) {
+      if (chordc[i].symbol == KEY_LAYOUT_FUNC) {
+        mode = (mode == LAYOUT_FUNC) ? LAYOUT : LAYOUT_FUNC;
+        led_layout(mode == LAYOUT_FUNC || layout != 0);
+      } else if (chordc[i].symbol == KEY_LAYOUT) {
+        layout2(layout ? 0 : 1);
+      } else if (chordc[i].symbol == KEY_RESET_MODS) {
+        release_mods();
+      } else if (chordc[i].symbol >= KEY_LEFT_CTRL && chordc[i].symbol <= KEY_RIGHT_GUI) {
+        byte mod = (1 << (chordc[i].symbol - KEY_LEFT_CTRL));
+        if (mods & mod) {
+          mods &= ~ mod;
+          Keyboard.release(chordc[i].symbol);
         } else {
-          Keyboard.write(chordc[i].symbol);
+          mods |= mod;
+          Keyboard.press(chordc[i].symbol);
         }
-        break;
+        led_layout(mods || layout != 0);
+      } else {
+        Keyboard.write(chordc[i].symbol);
       }
+      break;
     }
-    for (uint8_t i = 0; i < CHORDCC; i ++) { // Ctrl + Controls
-      if (touched.list[k].chord == chordcc[i].chord) {
+  }
+  for (uint8_t i = 0; i < CHORDCC; i ++) { // Ctrl + Controls
+    if (touched.list[k].chord == chordcc[i].chord) {
+      if (chordcc[i].symbol == KEY_TAB) {
+        Keyboard.press(KEY_LEFT_ALT);
+        Keyboard.write(chordcc[i].symbol);
+        mode = LAYOUT_TAB;
+        led_layout(true);
+      } else {
         Keyboard.press(KEY_LEFT_CTRL);
         Keyboard.write(chordcc[i].symbol);
         Keyboard.release(KEY_LEFT_CTRL);
         mods &= ~ (KEY_LEFT_CTRL - 0x80);
+      }
+      break;
+    }
+  }
+}
+
+void chord_func(byte k) {
+  for (uint8_t i = 0; i < CHORDF; i ++) {
+    if (touched.list[k].chord == chordf[i].chord) {
+      Keyboard.write(chordf[i].symbol);
+      break;
+    }
+  }
+  mode = LAYOUT;
+  release_mods();
+}
+
+void chord_tab(byte k) {
+  if (touched.list[k].chord & (~ 0b111)) {
+    for (uint8_t i = 0; i < CHORDT; i ++) {
+      if (touched.list[k].chord == chordt[i].chord) {
+        Keyboard.write(chordt[i].symbol);
         break;
       }
     }
-  //}
+  } else {
+    mode = LAYOUT;
+    release_mods();
+  }
+}
+
+void press(byte k) { // Press on release
+  if (mode == LAYOUT_FUNC) {
+    chord_func(k);
+  } else if (mode == LAYOUT_TAB) {
+    chord_tab(k);
+  } else {
+    chord_symbol(k);
+    chord_control(k);
+  }
 }
 
 void setup() {
