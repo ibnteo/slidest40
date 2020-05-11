@@ -1,6 +1,6 @@
 /*
  * Touch slide keyboard Slidest40 (сенсорная слайдовая клавиатура Слайдость40)
- * Version: 0.4 beta
+ * Version: 0.5 beta
  * Date: 2020-05-11
  * Description: https://github.com/ibnteo/slidest40 (soon)
  * Author: Vladimir Romanovich <ibnteo@gmail.com>
@@ -273,6 +273,11 @@ void chord_symbol(byte k) {
 }
 
 void chord_control(byte k) {
+  byte multiple = 0;
+  if (! (touched.list[k ? 0 : 1].chord & (~ 0b111))) {
+    multiple = touched.list[k ? 0 : 1].chord & 0b111;
+    touched.list[k ? 0 : 1].index = 0;
+  }
   for (uint8_t i = 0; i < CHORDC; i ++) { // Controls
     if (touched.list[k].chord == chordc[i].chord) {
       if (chordc[i].symbol == KEY_LAYOUT_FUNC) {
@@ -292,6 +297,15 @@ void chord_control(byte k) {
           Keyboard.press(chordc[i].symbol);
         }
         led_layout(mods || layout != 0);
+      } else if (multiple == 1) {
+        Keyboard.press(KEY_LEFT_CTRL);
+        Keyboard.write(chordc[i].symbol);
+        Keyboard.release(KEY_LEFT_CTRL);
+        mods &= ~ (KEY_LEFT_CTRL - 0x80);
+      } else if (multiple) {
+        for (byte m = 0; m < multiple; m ++) {
+          Keyboard.write(chordc[i].symbol);
+        }
       } else {
         Keyboard.write(chordc[i].symbol);
       }
@@ -307,7 +321,13 @@ void chord_control(byte k) {
         led_layout(true);
       } else {
         Keyboard.press(KEY_LEFT_CTRL);
-        Keyboard.write(chordcc[i].symbol);
+        if (multiple) {
+          for (byte m = 0; m < multiple; m ++) {
+            Keyboard.write(chordcc[i].symbol);
+          }
+        } else {
+          Keyboard.write(chordcc[i].symbol);
+        }
         Keyboard.release(KEY_LEFT_CTRL);
         mods &= ~ (KEY_LEFT_CTRL - 0x80);
       }
@@ -328,7 +348,7 @@ void chord_func(byte k) {
 }
 
 void chord_tab(byte k) {
-  if (touched.list[k].chord & (~ 0b111)) {
+  if (touched.list[k].index != 3) {
     for (uint8_t i = 0; i < CHORDT; i ++) {
       if (touched.list[k].chord == chordt[i].chord) {
         Keyboard.write(chordt[i].symbol);
@@ -384,7 +404,7 @@ void loop() {
     }
     if (! (touched.curr & (1 << i)) && (touched.last & (1 << i)) ) { // Release
       if (! (touched.curr & (0b1100110011 << (k + k)))) { // All release
-        if (touched.list[k].chord) {
+        if (touched.list[k].index && touched.list[k].chord) {
           press(k);
         }
         touched.list[k].index = 0;
