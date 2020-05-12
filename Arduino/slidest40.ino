@@ -1,7 +1,7 @@
 /*
  * Touch slide keyboard Slidest40 (сенсорная слайдовая клавиатура Слайдость40)
- * Version: 0.5 beta
- * Date: 2020-05-11
+ * Version: 0.51 beta
+ * Date: 2020-05-12
  * Description: https://github.com/ibnteo/slidest40 (soon)
  * Author: Vladimir Romanovich <ibnteo@gmail.com>
  * License: MIT
@@ -178,13 +178,17 @@ byte mode = LAYOUT;
 #define CHORDC sizeof(chordc) / 3
 Chord chordc[] = {
   {S2(2,1), KEY_BACKSPACE},
+  {S4(2,1,2,1), KEY_DELETE},
+  {S4(1,2,1,2), KEY_INSERT},
   {S2(2,4), KEY_RETURN},
   {S2(4,6), KEY_DOWN_ARROW},
   {S3(4,6,4), KEY_PAGE_DOWN},
   {S2(6,4), KEY_UP_ARROW},
   {S3(6,4,6), KEY_PAGE_UP},
   {S2(6,5), KEY_LEFT_ARROW},
+  {S4(6,5,6,5), KEY_HOME},
   {S2(5,6), KEY_RIGHT_ARROW},
+  {S4(5,6,5,6), KEY_END},
   {S3(1,2,1), KEY_LAYOUT},
   {S4(1,2,1,3), KEY_LAYOUT_FUNC},
   {S2(4,2), KEY_LEFT_SHIFT},
@@ -276,10 +280,12 @@ void chord_control(byte k) {
   byte multiple = 0;
   if (! (touched.list[k ? 0 : 1].chord & (~ 0b111))) {
     multiple = touched.list[k ? 0 : 1].chord & 0b111;
-    touched.list[k ? 0 : 1].index = 0;
   }
   for (uint8_t i = 0; i < CHORDC; i ++) { // Controls
     if (touched.list[k].chord == chordc[i].chord) {
+      if (multiple) {
+        touched.list[k ? 0 : 1].index = 0;
+      }
       if (chordc[i].symbol == KEY_LAYOUT_FUNC) {
         mode = (mode == LAYOUT_FUNC) ? LAYOUT : LAYOUT_FUNC;
         led_layout(mode == LAYOUT_FUNC || layout != 0);
@@ -294,7 +300,10 @@ void chord_control(byte k) {
           Keyboard.release(chordc[i].symbol);
         } else {
           mods |= mod;
-          Keyboard.press(chordc[i].symbol);
+          Keyboard.press(chordc[i].symbol);      if (multiple) {
+        touched.list[k ? 0 : 1].index = 0;
+      }
+
         }
         led_layout(mods || layout != 0);
       } else if (multiple == 1) {
@@ -314,6 +323,9 @@ void chord_control(byte k) {
   }
   for (uint8_t i = 0; i < CHORDCC; i ++) { // Ctrl + Controls
     if (touched.list[k].chord == chordcc[i].chord) {
+      if (multiple) {
+        touched.list[k ? 0 : 1].index = 0;
+      }
       if (chordcc[i].symbol == KEY_TAB) {
         Keyboard.press(KEY_LEFT_ALT);
         Keyboard.write(chordcc[i].symbol);
