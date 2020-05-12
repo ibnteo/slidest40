@@ -1,6 +1,6 @@
 /*
  * Touch slide keyboard Slidest40 (сенсорная слайдовая клавиатура Слайдость40)
- * Version: 0.51 beta
+ * Version: 0.6 pre-release
  * Date: 2020-05-12
  * Description: https://github.com/ibnteo/slidest40 (soon)
  * Author: Vladimir Romanovich <ibnteo@gmail.com>
@@ -85,6 +85,8 @@ Chord2 chord[] = {
   {S3(6,5,3), {'p', 'g'}},
   {S3(6,4,3), {'g', 'u'}},
   {S3(6,4,2), {0, 'w'}}, // tion ц
+  //{S4(6,4,2,4), {0, 0}}, // Reserv
+  //{S5(6,4,2,4,6), {0, 0}}, // Reserv
   {S4(1,2,4,3), {'1', '1'}},
   {S5(1,2,4,3,1), {'!', '!'}},
   {S4(2,1,3,4), {'2', '2'}},
@@ -142,36 +144,119 @@ ChordM chordm[] = {
   {S3(6,4,2), "tion"},
 };
 
+#define KEY_PRINTSCREEN 0xCE
+#define KEY_SCROLL_LOCK 0xCF
+#define KEY_PAUSE 0xD0
+
 #define CHORDF sizeof(chordf) / 3
 Chord chordf[] {
-  {S2(1,2), KEY_F1},
-  {S2(2,1), KEY_F2},
-  {S2(1,3), KEY_F3},
-  {S2(2,4), KEY_F4},
-  {S2(3,1), KEY_F5},
-  {S2(4,2), KEY_F6},
-  {S2(3,4), KEY_F7},
-  {S2(4,3), KEY_F8},
-  {S2(3,5), KEY_F9},
-  {S2(4,6), KEY_F10},
-  {S2(5,6), KEY_F11},
-  {S2(6,5), KEY_F12},
+  {S3(1,2,4), KEY_F1},
+  {S4(1,2,4,3), KEY_F1},
+  {S3(2,1,3), KEY_F2},
+  {S4(2,1,3,4), KEY_F2},
+  {S3(1,3,4), KEY_F3},
+  {S4(1,3,4,2), KEY_F3},
+  {S3(2,4,3), KEY_F4},
+  {S4(2,4,3,1), KEY_F4},
+  {S3(3,1,2), KEY_F5},
+  {S4(3,1,2,4), KEY_F5},
+  {S3(4,2,1), KEY_F6},
+  {S4(4,2,1,3), KEY_F6},
+  {S3(3,4,2), KEY_F7},
+  {S4(3,4,2,1), KEY_F7},
+  {S3(4,3,1), KEY_F8},
+  {S4(4,3,1,2), KEY_F8},
+  {S3(3,4,6), KEY_F9},
+  {S4(3,4,6,5), KEY_F9},
+  {S3(4,3,5), KEY_F10},
+  {S4(4,3,5,6), KEY_F10},
+  {S3(3,5,6), KEY_F11},
+  {S4(3,5,6,4), KEY_F11},
+  {S3(4,6,5), KEY_F12},
+  {S4(4,6,5,3), KEY_F12},
+  {S3(5,3,4), KEY_CAPS_LOCK},
+  {S4(5,3,4,6), KEY_CAPS_LOCK},
+  {S3(6,4,3), KEY_SCROLL_LOCK},
+  {S4(6,4,3,5), KEY_SCROLL_LOCK},
+  {S3(5,6,4), KEY_PRINTSCREEN},
+  {S4(5,6,4,3), KEY_PRINTSCREEN},
+  {S3(6,5,3), KEY_PAUSE},
+  {S4(6,5,3,4), KEY_PAUSE},
 };
 
+#define KEY_NUM_LOCK 0xDB
+#define KEYPAD_SLASH 0xDC
+#define KEYPAD_ASTERIX 0xDD
+#define KEYPAD_MINUS 0xDE
+#define KEYPAD_PLUS 0xDF
+#define KEYPAD_ENTER 0xE0
+#define KEYPAD_1 0xE1
+#define KEYPAD_2 0xE2
+#define KEYPAD_3 0xE3
+#define KEYPAD_4 0xE4
+#define KEYPAD_5 0xE5
+#define KEYPAD_6 0xE6
+#define KEYPAD_7 0xE7
+#define KEYPAD_8 0xE8
+#define KEYPAD_9 0xE9
+#define KEYPAD_0 0xEA
+#define KEYPAD_PERIOD 0xEB
+
+#define CHORDN sizeof(chordn) / 3
+Chord chordn[] {
+  {S3(1,2,4), KEYPAD_1},
+  {S4(1,2,4,3), KEYPAD_1},
+  {S3(2,1,3), KEYPAD_2},
+  {S4(2,1,3,4), KEYPAD_2},
+  {S3(1,3,4), KEYPAD_3},
+  {S4(1,3,4,2), KEYPAD_3},
+  {S3(2,4,3), KEYPAD_4},
+  {S4(2,4,3,1), KEYPAD_4},
+  {S3(3,1,2), KEYPAD_5},
+  {S4(3,1,2,4), KEYPAD_5},
+  {S3(4,2,1), KEYPAD_6},
+  {S4(4,2,1,3), KEYPAD_6},
+  {S3(3,4,2), KEYPAD_7},
+  {S4(3,4,2,1), KEYPAD_7},
+  {S3(4,3,1), KEYPAD_8},
+  {S4(4,3,1,2), KEYPAD_8},
+  {S3(3,4,6), KEYPAD_9},
+  {S4(3,4,6,5), KEYPAD_9},
+  {S3(4,3,5), KEYPAD_0},
+  {S4(4,3,5,6), KEYPAD_0},
+  {S3(3,5,6), KEY_NUM_LOCK},
+  {S4(3,5,6,4), KEY_NUM_LOCK},
+  {S3(4,6,5), KEYPAD_PERIOD},
+  {S4(4,6,5,3), KEYPAD_PERIOD},
+  {S3(5,3,4), KEYPAD_MINUS},
+  {S4(5,3,4,6), KEYPAD_MINUS},
+  {S3(6,4,3), KEYPAD_PLUS},
+  {S4(6,4,3,5), KEYPAD_PLUS},
+  {S3(5,6,4), KEYPAD_SLASH},
+  {S4(5,6,4,3), KEYPAD_SLASH},
+  {S3(6,5,3), KEYPAD_ASTERIX},
+  {S4(6,5,3,4), KEYPAD_ASTERIX},
+};
+
+#define KEY_TAB_SHIFT 255
 #define CHORDT sizeof(chordt) / 3
 Chord chordt[] {
-  {S2(3,4), KEY_RIGHT_ARROW},
-  {S2(4,3), KEY_LEFT_ARROW},
+  {S2(3,4), KEY_TAB},
+  {S2(4,3), KEY_TAB_SHIFT},
+  {S2(5,6), KEY_RIGHT_ARROW},
+  {S2(6,4), KEY_LEFT_ARROW},
 };
 
 #define KEY_LAYOUT 255
 #define KEY_LAYOUT_FUNC 254
-#define KEY_RESET_MODS 253
+#define KEY_LAYOUT_NUM 253
+#define KEY_RESET_MODS 252
 byte layout = 0;
 byte mods = 0;
 #define LAYOUT 0
 #define LAYOUT_FUNC 1
-#define LAYOUT_TAB 2
+#define LAYOUT_NUM 2
+#define LAYOUT_TAB 3
 byte mode = LAYOUT;
 
 // Controls
@@ -191,22 +276,24 @@ Chord chordc[] = {
   {S4(5,6,5,6), KEY_END},
   {S3(1,2,1), KEY_LAYOUT},
   {S4(1,2,1,3), KEY_LAYOUT_FUNC},
+  {S5(1,2,1,3,5), KEY_LAYOUT_NUM},
   {S2(4,2), KEY_LEFT_SHIFT},
-  {S4(4,3,4,2), KEY_TAB},
+  {S3(4,3,4), KEY_TAB},
   {S3(3,4,3), KEY_LEFT_CTRL},
+  {S4(3,4,3,1), KEY_ESC},
   {S3(4,2,4), KEY_LEFT_ALT},
   {S4(4,2,4,6), KEY_LEFT_GUI},
   {S4(4,2,4,2), KEY_RESET_MODS},
 };
 
-// Ctrl + Controls
+// Ctrl+Controls or Alt+Tab
 #define CHORDCC sizeof(chordcc) / 3
 Chord chordcc[] = {
   {S3(2,1,2), KEY_BACKSPACE},
   {S3(1,3,1), KEY_RETURN},
   {S3(5,6,5), KEY_RIGHT_ARROW},
   {S3(6,5,6), KEY_LEFT_ARROW},
-  {S3(4,3,4), KEY_TAB},
+  {S4(4,3,4,6), KEY_TAB},
 };
 
 #define LED_LAYOUT LED_BUILTIN_RX
@@ -243,102 +330,135 @@ void release_mods() {
     led_layout(layout != 0);
 }
 
-void chord_symbol(byte k) {
+bool chord_symbol(byte k) {
+  bool result = false;
   for (uint8_t i = 0; i < CHORD; i ++) {
     if (touched.list[k].chord == chord[i].chord) {
-      bool macros = false;
       if (chord[i].symbols[layout] == 0) { // Macros
         for (byte j = 0; j < CHORDM; j ++) {
           if (touched.list[k].chord == chordm[j].chord) {
             release_mods();
             Keyboard.print(chordm[j].macros);
-            macros = true;
+            result = true;
             break;
           }
         }
         byte m = layout ? 0 : 1;
-        if (! macros && chord[i].symbols[m]) {
+        if (! result && chord[i].symbols[m]) {
           // TODO: save and clean mods
           layout2(layout ? 0 : 1);
           // TODO: restore mods
           Keyboard.write(chord[i].symbols[m]);
           layout2(layout ? 0 : 1);
           release_mods();
+          result = true;
         }
       } else {
         if (! (mods && chord[i].symbols[layout] == ' ')) {
           Keyboard.write(chord[i].symbols[layout]);
         }
         release_mods();
+        result = true;
       }
       break;
     }
   }
+  return result;
 }
 
-void chord_control(byte k) {
+bool chord_control(byte k) {
+  bool result = false;
   byte multiple = 0;
   if (! (touched.list[k ? 0 : 1].chord & (~ 0b111))) {
     multiple = touched.list[k ? 0 : 1].chord & 0b111;
   }
   for (uint8_t i = 0; i < CHORDC; i ++) { // Controls
     if (touched.list[k].chord == chordc[i].chord) {
+      result = true;
+      byte symbol = chordc[i].symbol;
+      if (mode == LAYOUT_NUM && symbol == KEY_RETURN) {
+        symbol = KEYPAD_ENTER;
+      }
       if (multiple) {
         touched.list[k ? 0 : 1].index = 0;
       }
-      if (chordc[i].symbol == KEY_LAYOUT_FUNC) {
+      if (symbol == KEY_LAYOUT_FUNC) {
         mode = (mode == LAYOUT_FUNC) ? LAYOUT : LAYOUT_FUNC;
         led_layout(mode == LAYOUT_FUNC || layout != 0);
-      } else if (chordc[i].symbol == KEY_LAYOUT) {
-        layout2(layout ? 0 : 1);
-      } else if (chordc[i].symbol == KEY_RESET_MODS) {
+      } else if (symbol == KEY_LAYOUT_NUM) {
+        mode = (mode == LAYOUT_NUM) ? LAYOUT : LAYOUT_NUM;
+        led_layout(mode == LAYOUT_NUM || layout != 0);
+      } else if (symbol == KEY_LAYOUT) {
+        if (mode == LAYOUT) {
+          layout2(layout ? 0 : 1);
+        } else {
+          mode = LAYOUT;
+          led_layout(layout != 0);
+        }
+      } else if (symbol == KEY_RESET_MODS) {
         release_mods();
-      } else if (chordc[i].symbol >= KEY_LEFT_CTRL && chordc[i].symbol <= KEY_RIGHT_GUI) {
-        byte mod = (1 << (chordc[i].symbol - KEY_LEFT_CTRL));
+      } else if (symbol >= KEY_LEFT_CTRL && symbol <= KEY_RIGHT_GUI) {
+        byte mod = (1 << (symbol - KEY_LEFT_CTRL));
         if (mods & mod) {
           mods &= ~ mod;
-          Keyboard.release(chordc[i].symbol);
+          Keyboard.release(symbol);
         } else {
           mods |= mod;
-          Keyboard.press(chordc[i].symbol);      if (multiple) {
-        touched.list[k ? 0 : 1].index = 0;
-      }
-
+          Keyboard.press(symbol);
         }
         led_layout(mods || layout != 0);
       } else if (multiple == 1) {
         Keyboard.press(KEY_LEFT_CTRL);
-        Keyboard.write(chordc[i].symbol);
+        Keyboard.write(symbol);
         Keyboard.release(KEY_LEFT_CTRL);
         mods &= ~ (KEY_LEFT_CTRL - 0x80);
       } else if (multiple) {
         for (byte m = 0; m < multiple; m ++) {
-          Keyboard.write(chordc[i].symbol);
+          Keyboard.write(symbol);
         }
       } else {
-        Keyboard.write(chordc[i].symbol);
+        Keyboard.write(symbol);
       }
       break;
     }
   }
+  return result;
+}
+
+bool chord_ccontrol(byte k) {
+  bool result = false;
+  byte multiple = 0;
+  if (! (touched.list[k ? 0 : 1].chord & (~ 0b111))) {
+    multiple = touched.list[k ? 0 : 1].chord & 0b111;
+  }
   for (uint8_t i = 0; i < CHORDCC; i ++) { // Ctrl + Controls
     if (touched.list[k].chord == chordcc[i].chord) {
+      result = true;
+      byte symbol = chordcc[i].symbol;
+      if (mode == LAYOUT_NUM && symbol == KEY_RETURN) {
+        symbol = KEYPAD_ENTER;
+      }
       if (multiple) {
         touched.list[k ? 0 : 1].index = 0;
       }
-      if (chordcc[i].symbol == KEY_TAB) {
-        Keyboard.press(KEY_LEFT_ALT);
-        Keyboard.write(chordcc[i].symbol);
-        mode = LAYOUT_TAB;
-        led_layout(true);
+      if (symbol == KEY_TAB) {
+        if (mods) {
+          Keyboard.write(' ');
+          release_mods();
+        } else {
+          Keyboard.press(KEY_LEFT_ALT);
+          Keyboard.write(symbol);
+          mode = LAYOUT_TAB;
+          led_layout(true);
+        }
       } else {
         Keyboard.press(KEY_LEFT_CTRL);
         if (multiple) {
           for (byte m = 0; m < multiple; m ++) {
-            Keyboard.write(chordcc[i].symbol);
+            Keyboard.write(symbol);
           }
         } else {
-          Keyboard.write(chordcc[i].symbol);
+          Keyboard.write(symbol);
         }
         Keyboard.release(KEY_LEFT_CTRL);
         mods &= ~ (KEY_LEFT_CTRL - 0x80);
@@ -346,24 +466,47 @@ void chord_control(byte k) {
       break;
     }
   }
+  return result;
 }
 
-void chord_func(byte k) {
+bool chord_func(byte k) {
+  bool result = false;
   for (uint8_t i = 0; i < CHORDF; i ++) {
     if (touched.list[k].chord == chordf[i].chord) {
+      result = true;
       Keyboard.write(chordf[i].symbol);
+      mode = LAYOUT;
+      release_mods();
       break;
     }
   }
-  mode = LAYOUT;
-  release_mods();
+  return result;
+}
+
+bool chord_num(byte k) {
+  bool result = false;
+  for (uint8_t i = 0; i < CHORDN; i ++) {
+    if (touched.list[k].chord == chordn[i].chord) {
+      result = true;
+      Keyboard.write(chordn[i].symbol);
+      break;
+    }
+  }
+  return result;
 }
 
 void chord_tab(byte k) {
   if (touched.list[k].index != 3) {
     for (uint8_t i = 0; i < CHORDT; i ++) {
       if (touched.list[k].chord == chordt[i].chord) {
-        Keyboard.write(chordt[i].symbol);
+        if (chordt[i].symbol == KEY_TAB_SHIFT) {
+          Keyboard.press(KEY_LEFT_SHIFT);
+          Keyboard.write(KEY_TAB);
+          Keyboard.release(KEY_LEFT_SHIFT);
+          mods &= ~ (KEY_LEFT_SHIFT - 0x80);
+        } else {
+          Keyboard.write(chordt[i].symbol);
+        }
         break;
       }
     }
@@ -375,12 +518,13 @@ void chord_tab(byte k) {
 
 void press(byte k) { // Press on release
   if (mode == LAYOUT_FUNC) {
-    chord_func(k);
+    chord_func(k) & chord_control(k);
+  } else if (mode == LAYOUT_NUM) {
+    chord_num(k) & chord_control(k);
   } else if (mode == LAYOUT_TAB) {
     chord_tab(k);
   } else {
-    chord_symbol(k);
-    chord_control(k);
+    chord_symbol(k) & chord_control(k) & chord_ccontrol(k);
   }
 }
 
