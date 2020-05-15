@@ -1,6 +1,6 @@
 /*
    Touch slide keyboard Slidest40 (сенсорная слайдовая клавиатура Слайдость40)
-   Version: 0.7 pre-release
+   Version: 0.71 pre-release
    Date: 2020-05-15
    Description: https://github.com/ibnteo/slidest40 (soon)
    Author: Vladimir Romanovich <ibnteo@gmail.com>
@@ -46,12 +46,13 @@ struct ChordString {
   String macros;
 };
 
-#define S1(s1) (s1)
-#define S2(s1,s2) (s1|(s2<<3))
-#define S3(s1,s2,s3) (s1|(s2<<3)|(s3<<6))
-#define S4(s1,s2,s3,s4) (s1|(s2<<3)|(s3<<6)|(s4<<9))
-#define S5(s1,s2,s3,s4,s5) (s1|(s2<<3)|(s3<<6)|(s4<<9)|(s5<<12))
-#define S6(s1,s2,s3,s4,s5,s6) (s1|(s2<<3)|(s3<<6)|(s4<<9)|(s5<<12)), (s6)
+#define S1(s1) s1, 0
+#define S2(s1, s2) (s1 | (s2<<3)), 0
+#define S3(s1, s2, s3) (s1 | (s2<<3)|(s3<<6)), 0
+#define S4(s1, s2, s3, s4) (s1 | (s2<<3) | (s3<<6) | (s4<<9)), 0
+#define S5(s1, s2, s3, s4, s5) (s1 | (s2<<3) | (s3<<6) | (s4<<9) | (s5<<12)), 0
+#define S6(s1, s2, s3, s4, s5, s6) (s1 | (s2<<3) | (s3<<6) | (s4<<9) | (s5<<12)), s6
+#define S7(s1, s2, s3, s4, s5, s6, s7) (s1 | (s2<<3) | (s3<<6) | (s4<<9) | (s5<<12)), (s6|(s7<<3))
 
 #define KEY_PRINTSCREEN 0xCE
 #define KEY_SCROLL_LOCK 0xCF
@@ -82,182 +83,182 @@ struct ChordString {
 
 #define NUMERICS sizeof(numerics) / 4
 const Chord numerics[] PROGMEM = {
-  {S3(1, 2, 4), 0, KEYPAD_1},
-  {S4(1, 2, 4, 3), 0, KEYPAD_1},
-  {S3(2, 1, 3), 0, KEYPAD_2},
-  {S4(2, 1, 3, 4), 0, KEYPAD_2},
-  {S3(1, 3, 4), 0, KEYPAD_3},
-  {S4(1, 3, 4, 2), 0, KEYPAD_3},
-  {S3(2, 4, 3), 0, KEYPAD_4},
-  {S4(2, 4, 3, 1), 0, KEYPAD_4},
-  {S3(3, 1, 2), 0, KEYPAD_5},
-  {S4(3, 1, 2, 4), 0, KEYPAD_5},
-  {S3(4, 2, 1), 0, KEYPAD_6},
-  {S4(4, 2, 1, 3), 0, KEYPAD_6},
-  {S3(3, 4, 2), 0, KEYPAD_7},
-  {S4(3, 4, 2, 1), 0, KEYPAD_7},
-  {S3(4, 3, 1), 0, KEYPAD_8},
-  {S4(4, 3, 1, 2), 0, KEYPAD_8},
-  {S3(3, 4, 6), 0, KEYPAD_9},
-  {S4(3, 4, 6, 5), 0, KEYPAD_9},
-  {S3(4, 3, 5), 0, KEYPAD_0},
-  {S4(4, 3, 5, 6), 0, KEYPAD_0},
-  {S3(3, 5, 6), 0, KEY_NUM_LOCK},
-  {S4(3, 5, 6, 4), 0, KEY_NUM_LOCK},
-  {S3(4, 6, 5), 0, KEYPAD_PERIOD},
-  {S4(4, 6, 5, 3), 0, KEYPAD_PERIOD},
-  {S3(5, 3, 4), 0, KEYPAD_MINUS},
-  {S4(5, 3, 4, 6), 0, KEYPAD_MINUS},
-  {S3(6, 4, 3), 0, KEYPAD_PLUS},
-  {S4(6, 4, 3, 5), 0, KEYPAD_PLUS},
-  {S3(5, 6, 4), 0, KEYPAD_SLASH},
-  {S4(5, 6, 4, 3), 0, KEYPAD_SLASH},
-  {S3(6, 5, 3), 0, KEYPAD_ASTERIX},
-  {S4(6, 5, 3, 4), 0, KEYPAD_ASTERIX},
+  {S3(1, 2, 4), KEYPAD_1},
+  {S4(1, 2, 4, 3), KEYPAD_1},
+  {S3(2, 1, 3), KEYPAD_2},
+  {S4(2, 1, 3, 4), KEYPAD_2},
+  {S3(1, 3, 4), KEYPAD_3},
+  {S4(1, 3, 4, 2), KEYPAD_3},
+  {S3(2, 4, 3), KEYPAD_4},
+  {S4(2, 4, 3, 1), KEYPAD_4},
+  {S3(3, 1, 2), KEYPAD_5},
+  {S4(3, 1, 2, 4), KEYPAD_5},
+  {S3(4, 2, 1), KEYPAD_6},
+  {S4(4, 2, 1, 3), KEYPAD_6},
+  {S3(3, 4, 2), KEYPAD_7},
+  {S4(3, 4, 2, 1), KEYPAD_7},
+  {S3(4, 3, 1), KEYPAD_8},
+  {S4(4, 3, 1, 2), KEYPAD_8},
+  {S3(3, 4, 6), KEYPAD_9},
+  {S4(3, 4, 6, 5), KEYPAD_9},
+  {S3(4, 3, 5), KEYPAD_0},
+  {S4(4, 3, 5, 6), KEYPAD_0},
+  {S3(3, 5, 6), KEY_NUM_LOCK},
+  {S4(3, 5, 6, 4), KEY_NUM_LOCK},
+  {S3(4, 6, 5), KEYPAD_PERIOD},
+  {S4(4, 6, 5, 3), KEYPAD_PERIOD},
+  {S3(5, 3, 4), KEYPAD_MINUS},
+  {S4(5, 3, 4, 6), KEYPAD_MINUS},
+  {S3(6, 4, 3), KEYPAD_PLUS},
+  {S4(6, 4, 3, 5), KEYPAD_PLUS},
+  {S3(5, 6, 4), KEYPAD_SLASH},
+  {S4(5, 6, 4, 3), KEYPAD_SLASH},
+  {S3(6, 5, 3), KEYPAD_ASTERIX},
+  {S4(6, 5, 3, 4), KEYPAD_ASTERIX},
 
-  {S4(3, 4, 3, 1), 0, KEY_LINUX},
-  {S4(3, 1, 3, 4), 0, KEY_WINDOWS},
-  {S4(3, 5, 3, 4), 0, KEY_MACOS},
-  {S4(3, 4, 3, 5), 0, KEY_ANDROID},
+  {S4(3, 4, 3, 1), KEY_LINUX},
+  {S4(3, 1, 3, 4), KEY_WINDOWS},
+  {S4(3, 5, 3, 4), KEY_MACOS},
+  {S4(3, 4, 3, 5), KEY_ANDROID},
 };
 
 #define KEY_TAB_SHIFT 255
 #define TABS sizeof(tabs) / 4
 const Chord tabs[] PROGMEM = {
-  {S2(3, 4), 0, KEY_TAB},
-  {S2(4, 3), 0, KEY_TAB_SHIFT},
-  {S2(5, 6), 0, KEY_RIGHT_ARROW},
-  {S2(6, 5), 0, KEY_LEFT_ARROW},
-  {S4(4, 3, 4, 2), 0, KEY_ESC},
+  {S2(3, 4), KEY_TAB},
+  {S2(4, 3), KEY_TAB_SHIFT},
+  {S2(5, 6), KEY_RIGHT_ARROW},
+  {S2(6, 5), KEY_LEFT_ARROW},
+  {S4(4, 3, 4, 2), KEY_ESC},
 };
 
 #define SYMBOLS sizeof(symbols) / 5
 const Chord2 symbols[] PROGMEM = {
-  {S1(1), 0, {'o', 'j'}},
-  {S2(1, 2), 0, {'m', 'v'}},
-  {S2(1, 3), 0, {'h', 'd'}}, // в
-  {S3(1, 3, 5), 0, {'f', 'a'}},
-  {S3(1, 2, 4), 0, {'w', 'i'}}, // ш
-  {S3(1, 3, 4), 0, {'k', 'x'}}, // ч
-  {S1(2), 0, {'a', 'f'}},
-  {S3(2, 1, 3), 0, {'d', 'l'}},
-  {S3(2, 4, 3), 0, {'b', ','}},
-  {S3(2, 4, 6), 0, {0, 'o'}}, // you щ
-  {S4(2, 4, 6, 4), 0, {0, ']'}}, // ъ
-  {S1(3), 0, {'n', 'y'}},
-  {S2(3, 1), 0, {'t', 'n'}},
-  {S2(3, 5), 0, {'s', 'c'}},
-  {S2(3, 4), 0, {'r', 'h'}},
-  {S3(3, 1, 2), 0, {'j', 'z'}}, // я
-  {S3(3, 4, 2), 0, {0, 'q'}}, // the й
-  {S3(3, 5, 6), 0, {'y', 'm'}}, // ь
-  {S3(3, 4, 6), 0, {0, 's'}}, // same ы
-  {S1(4), 0, {' ', ' '}},
-  {S2(4, 3), 0, {'l', 'k'}},
-  {S3(4, 2, 1), 0, {'u', 'e'}},
-  {S3(4, 3, 1), 0, {0, '.'}}, // ough ю
-  {S3(4, 6, 5), 0, {'q', '\''}}, // э
-  {S3(4, 3, 5), 0, {0, '`'}}, // ght ё
-  {S1(5), 0, {'e', 't'}},
-  {S2(5, 3), 0, {'c', 'r'}}, // к
-  {S3(5, 3, 1), 0, {'z', 'p'}},
-  {S3(5, 3, 4), 0, {'x', '['}}, // х
-  {S3(5, 6, 4), 0, {'v', ';'}}, // ж
-  {S1(6), 0, {'i', 'b'}},
-  {S3(6, 5, 3), 0, {'p', 'g'}},
-  {S3(6, 4, 3), 0, {'g', 'u'}},
-  {S3(6, 4, 2), 0, {0, 'w'}}, // tion ц
-  //{S4(6,4,2,4), 0, {0, 0}}, // Reserved
-  //{S5(6,4,2,4,6), 0, {0, 0}}, // Reserved
-  {S4(1, 2, 4, 3), 0, {'1', '1'}},
-  {S5(1, 2, 4, 3, 1), 0, {'!', '!'}},
-  {S4(2, 1, 3, 4), 0, {'2', '2'}},
-  {S5(2, 1, 3, 4, 2), 0, {'@', 0}},
-  {S4(1, 3, 4, 2), 0, {'3', '3'}},
-  {S5(1, 3, 4, 2, 1), 0, {'#', 0}},
-  {S4(2, 4, 3, 1), 0, {'4', '4'}},
-  {S5(2, 4, 3, 1, 2), 0, {'$', 0}},
-  {S4(3, 1, 2, 4), 0, {'5', '5'}},
-  {S5(3, 1, 2, 4, 3), 0, {'5', '5'}},
-  {S4(4, 2, 1, 3), 0, {'6', '6'}},
-  {S5(4, 2, 1, 3, 4), 0, {'^', 0}},
-  {S4(3, 4, 2, 1), 0, {'7', '7'}},
-  {S5(3, 4, 2, 1, 3), 0, {'&', 0}},
-  {S4(4, 3, 1, 2), 0, {'8', '8'}},
-  {S5(4, 3, 1, 2, 4), 0, {'*', '*'}},
-  {S4(3, 4, 6, 5), 0, {'9', '9'}},
-  {S5(3, 4, 6, 5, 3), 0, {'(', '('}},
-  {S4(4, 3, 5, 6), 0, {'0', '0'}},
-  {S5(4, 3, 5, 6, 4), 0, {')', ')'}},
-  {S4(3, 5, 6, 4), 0, {',', '?'}},
-  {S5(3, 5, 6, 4, 3), 0, {';', '$'}},
-  {S4(4, 6, 5, 3), 0, {'.', '/'}},
-  {S5(4, 6, 5, 3, 4), 0, {':', '^'}},
-  {S4(5, 3, 4, 6), 0, {'[', 0}},
-  {S5(5, 3, 4, 6, 5), 0, {'{', 0}},
-  {S4(6, 4, 3, 5), 0, {']', 0}},
-  {S5(6, 4, 3, 5, 6), 0, {'}', 0}},
-  {S4(5, 6, 4, 3), 0, {'/', '|'}},
-  {S5(5, 6, 4, 3, 5), 0, {'<', 0}},
-  {S4(6, 5, 3, 4), 0, {'\\', '\\'}},
-  {S5(6, 5, 3, 4, 6), 0, {'>', 0}},
-  {S3(1, 3, 1), 0, {'?', '&'}},
-  {S4(1, 3, 1, 2), 0, {'|', 0}},
-  {S4(5, 3, 1, 3), 0, {'`', 0}},
-  {S5(5, 3, 1, 3, 5), 0, {'~', 0}},
-  {S4(1, 3, 5, 3), 0, {0, '#'}}, // №
-  //{S5(1,3,5,3,1), 0, {0, '#'}}, // Reserved
-  {S3(3, 1, 3), 0, {'-', '-'}},
-  {S4(3, 1, 3, 5), 0, {'_', '_'}},
-  {S3(3, 5, 3), 0, {'+', '+'}},
-  {S4(3, 5, 3, 1), 0, {'=', '='}},
-  {S3(5, 3, 5), 0, {'"', '"'}},
-  {S4(5, 3, 5, 6), 0, {'\'', 0}},
+  {S1(1), {'o', 'j'}},
+  {S2(1, 2), {'m', 'v'}},
+  {S2(1, 3), {'h', 'd'}}, // в
+  {S3(1, 3, 5), {'f', 'a'}},
+  {S3(1, 2, 4), {'w', 'i'}}, // ш
+  {S3(1, 3, 4), {'k', 'x'}}, // ч
+  {S1(2), {'a', 'f'}},
+  {S3(2, 1, 3), {'d', 'l'}},
+  {S3(2, 4, 3), {'b', ','}},
+  {S3(2, 4, 6), {0, 'o'}}, // you щ
+  {S4(2, 4, 6, 4), {0, ']'}}, // ъ
+  {S1(3), {'n', 'y'}},
+  {S2(3, 1), {'t', 'n'}},
+  {S2(3, 5), {'s', 'c'}},
+  {S2(3, 4), {'r', 'h'}},
+  {S3(3, 1, 2), {'j', 'z'}}, // я
+  {S3(3, 4, 2), {0, 'q'}}, // the й
+  {S3(3, 5, 6), {'y', 'm'}}, // ь
+  {S3(3, 4, 6), {0, 's'}}, // same ы
+  {S1(4), {' ', ' '}},
+  {S2(4, 3), {'l', 'k'}},
+  {S3(4, 2, 1), {'u', 'e'}},
+  {S3(4, 3, 1), {0, '.'}}, // ough ю
+  {S3(4, 6, 5), {'q', '\''}}, // э
+  {S3(4, 3, 5), {0, '`'}}, // ght ё
+  {S1(5), {'e', 't'}},
+  {S2(5, 3), {'c', 'r'}}, // к
+  {S3(5, 3, 1), {'z', 'p'}},
+  {S3(5, 3, 4), {'x', '['}}, // х
+  {S3(5, 6, 4), {'v', ';'}}, // ж
+  {S1(6), {'i', 'b'}},
+  {S3(6, 5, 3), {'p', 'g'}},
+  {S3(6, 4, 3), {'g', 'u'}},
+  {S3(6, 4, 2), {0, 'w'}}, // tion ц
+  //{S4(6,4,2,4), {0, 0}}, // Reserved
+  //{S5(6,4,2,4,6), {0, 0}}, // Reserved
+  {S4(1, 2, 4, 3), {'1', '1'}},
+  {S5(1, 2, 4, 3, 1), {'!', '!'}},
+  {S4(2, 1, 3, 4), {'2', '2'}},
+  {S5(2, 1, 3, 4, 2), {'@', 0}},
+  {S4(1, 3, 4, 2), {'3', '3'}},
+  {S5(1, 3, 4, 2, 1), {'#', 0}},
+  {S4(2, 4, 3, 1), {'4', '4'}},
+  {S5(2, 4, 3, 1, 2), {'$', 0}},
+  {S4(3, 1, 2, 4), {'5', '5'}},
+  {S5(3, 1, 2, 4, 3), {'5', '5'}},
+  {S4(4, 2, 1, 3), {'6', '6'}},
+  {S5(4, 2, 1, 3, 4), {'^', 0}},
+  {S4(3, 4, 2, 1), {'7', '7'}},
+  {S5(3, 4, 2, 1, 3), {'&', 0}},
+  {S4(4, 3, 1, 2), {'8', '8'}},
+  {S5(4, 3, 1, 2, 4), {'*', '*'}},
+  {S4(3, 4, 6, 5), {'9', '9'}},
+  {S5(3, 4, 6, 5, 3), {'(', '('}},
+  {S4(4, 3, 5, 6), {'0', '0'}},
+  {S5(4, 3, 5, 6, 4), {')', ')'}},
+  {S4(3, 5, 6, 4), {',', '?'}},
+  {S5(3, 5, 6, 4, 3), {';', '$'}},
+  {S4(4, 6, 5, 3), {'.', '/'}},
+  {S5(4, 6, 5, 3, 4), {':', '^'}},
+  {S4(5, 3, 4, 6), {'[', 0}},
+  {S5(5, 3, 4, 6, 5), {'{', 0}},
+  {S4(6, 4, 3, 5), {']', 0}},
+  {S5(6, 4, 3, 5, 6), {'}', 0}},
+  {S4(5, 6, 4, 3), {'/', '|'}},
+  {S5(5, 6, 4, 3, 5), {'<', 0}},
+  {S4(6, 5, 3, 4), {'\\', '\\'}},
+  {S5(6, 5, 3, 4, 6), {'>', 0}},
+  {S3(1, 3, 1), {'?', '&'}},
+  {S4(1, 3, 1, 2), {'|', 0}},
+  {S4(5, 3, 1, 3), {'`', 0}},
+  {S5(5, 3, 1, 3, 5), {'~', 0}},
+  {S4(1, 3, 5, 3), {0, '#'}}, // №
+  //{S5(1,3,5,3,1), {0, '#'}}, // Reserved
+  {S3(3, 1, 3), {'-', '-'}},
+  {S4(3, 1, 3, 5), {'_', '_'}},
+  {S3(3, 5, 3), {'+', '+'}},
+  {S4(3, 5, 3, 1), {'=', '='}},
+  {S3(5, 3, 5), {'"', '"'}},
+  {S4(5, 3, 5, 6), {'\'', 0}},
 
-  {S5(1, 2, 4, 3, 1), S1(2), KEY_F1},
-  {S5(2, 1, 3, 4, 2), S1(1), KEY_F2},
-  {S5(1, 3, 4, 2, 1), S1(3), KEY_F3},
-  {S5(2, 4, 3, 1, 2), S1(4), KEY_F4},
-  {S5(3, 1, 2, 4, 3), S1(1), KEY_F5},
-  {S5(4, 2, 1, 3, 4), S1(2), KEY_F6},
-  {S5(3, 4, 2, 1, 3), S1(4), KEY_F7},
-  {S5(4, 3, 1, 2, 4), S1(3), KEY_F8},
-  {S5(3, 4, 6, 5, 3), S1(4), KEY_F9},
-  {S5(4, 3, 5, 6, 4), S1(3), KEY_F10},
-  {S5(3, 5, 6, 4, 3), S1(5), KEY_F11},
-  {S5(4, 6, 5, 3, 4), S1(6), KEY_F12},
-  {S5(5, 3, 4, 6, 5), S1(3), KEY_CAPS_LOCK},
-  {S5(6, 4, 3, 5, 6), S1(4), KEY_SCROLL_LOCK},
-  {S5(5, 6, 4, 3, 5), S1(6), KEY_PRINTSCREEN},
-  {S5(6, 5, 3, 4, 6), S1(5), KEY_PAUSE},
+  {S6(1, 2, 4, 3, 1, 2), KEY_F1},
+  {S6(2, 1, 3, 4, 2, 1), KEY_F2},
+  {S6(1, 3, 4, 2, 1, 3), KEY_F3},
+  {S6(2, 4, 3, 1, 2, 4), KEY_F4},
+  {S6(3, 1, 2, 4, 3, 1), KEY_F5},
+  {S6(4, 2, 1, 3, 4, 2), KEY_F6},
+  {S6(3, 4, 2, 1, 3, 4), KEY_F7},
+  {S6(4, 3, 1, 2, 4, 3), KEY_F8},
+  {S6(3, 4, 6, 5, 3, 4), KEY_F9},
+  {S6(4, 3, 5, 6, 4, 3), KEY_F10},
+  {S6(3, 5, 6, 4, 3, 5), KEY_F11},
+  {S6(4, 6, 5, 3, 4, 6), KEY_F12},
+  {S6(5, 3, 4, 6, 5, 3), KEY_CAPS_LOCK},
+  {S6(6, 4, 3, 5, 6, 4), KEY_SCROLL_LOCK},
+  {S6(5, 6, 4, 3, 5, 6), KEY_PRINTSCREEN},
+  {S6(6, 5, 3, 4, 6, 5), KEY_PAUSE},
 
-  {S5(1, 2, 4, 3, 1), S2(2, 4), KEYPAD_1},
-  {S5(2, 1, 3, 4, 2), S2(1, 3), KEYPAD_2},
-  {S5(1, 3, 4, 2, 1), S2(3, 4), KEYPAD_3},
-  {S5(2, 4, 3, 1, 2), S2(4, 3), KEYPAD_4},
-  {S5(3, 1, 2, 4, 3), S2(1, 2), KEYPAD_5},
-  {S5(4, 2, 1, 3, 4), S2(2, 1), KEYPAD_6},
-  {S5(3, 4, 2, 1, 3), S2(4, 2), KEYPAD_7},
-  {S5(4, 3, 1, 2, 4), S2(3, 1), KEYPAD_8},
-  {S5(3, 4, 6, 5, 3), S2(4, 6), KEYPAD_9},
-  {S5(4, 3, 5, 6, 4), S2(3, 5), KEYPAD_0},
-  {S5(3, 5, 6, 4, 3), S2(5, 6), KEY_NUM_LOCK},
-  {S5(4, 6, 5, 3, 4), S2(6, 5), KEYPAD_PERIOD},
-  {S5(5, 3, 4, 6, 5), S2(3, 4), KEYPAD_MINUS},
-  {S5(6, 4, 3, 5, 6), S2(4, 3), KEYPAD_PLUS},
-  {S5(5, 6, 4, 3, 5), S2(6, 4), KEYPAD_SLASH},
-  {S5(6, 5, 3, 4, 6), S2(5, 3), KEYPAD_ASTERIX},
+  {S7(1, 2, 4, 3, 1, 2, 4), KEYPAD_1},
+  {S7(2, 1, 3, 4, 2, 1, 3), KEYPAD_2},
+  {S7(1, 3, 4, 2, 1, 3, 4), KEYPAD_3},
+  {S7(2, 4, 3, 1, 2, 4, 3), KEYPAD_4},
+  {S7(3, 1, 2, 4, 3, 1, 2), KEYPAD_5},
+  {S7(4, 2, 1, 3, 4, 2, 1), KEYPAD_6},
+  {S7(3, 4, 2, 1, 3, 4, 2), KEYPAD_7},
+  {S7(4, 3, 1, 2, 4, 3, 1), KEYPAD_8},
+  {S7(3, 4, 6, 5, 3, 4, 6), KEYPAD_9},
+  {S7(4, 3, 5, 6, 4, 3, 5), KEYPAD_0},
+  {S7(3, 5, 6, 4, 3, 5, 6), KEY_NUM_LOCK},
+  {S7(4, 6, 5, 3, 4, 6, 5), KEYPAD_PERIOD},
+  {S7(5, 3, 4, 6, 5, 3, 4), KEYPAD_MINUS},
+  {S7(6, 4, 3, 5, 6, 4, 3), KEYPAD_PLUS},
+  {S7(5, 6, 4, 3, 5, 6, 4), KEYPAD_SLASH},
+  {S7(6, 5, 3, 4, 6, 5, 3), KEYPAD_ASTERIX},
 };
 
 // Macros
 #define MACROS sizeof(macros) / 9
 const ChordString macros[] = {
-  {S3(2, 4, 6), 0, "you"},
-  {S3(3, 4, 2), 0, "the"},
-  {S3(3, 4, 6), 0, "same"},
-  {S3(4, 3, 1), 0, "ough"},
-  {S3(4, 3, 5), 0, "ght"},
-  {S3(6, 4, 2), 0, "tion"},
+  {S3(2, 4, 6), "you"},
+  {S3(3, 4, 2), "the"},
+  {S3(3, 4, 6), "same"},
+  {S3(4, 3, 1), "ough"},
+  {S3(4, 3, 5), "ght"},
+  {S3(6, 4, 2), "tion"},
 };
 
 #define KEY_LAYOUT_0 255
@@ -273,37 +274,37 @@ byte mode = LAYOUT;
 
 #define CONTROLS sizeof(controls) / 4
 const Chord controls[] PROGMEM = {
-  {S2(2, 1), 0, KEY_BACKSPACE},
-  {S4(2, 1, 2, 4), 0, KEY_INSERT},
-  {S2(2, 4), 0, KEY_RETURN},
-  {S2(4, 6), 0, KEY_DOWN_ARROW},
-  {S3(4, 6, 4), 0, KEY_PAGE_DOWN},
-  {S2(6, 4), 0, KEY_UP_ARROW},
-  {S3(6, 4, 6), 0, KEY_PAGE_UP},
-  {S2(6, 5), 0, KEY_LEFT_ARROW},
-  {S4(6, 5, 6, 5), 0, KEY_HOME},
-  {S2(5, 6), 0, KEY_RIGHT_ARROW},
-  {S4(5, 6, 5, 6), 0, KEY_END},
-  {S3(1, 2, 1), 0, KEY_DELETE},
-  {S4(1, 2, 1, 3), 0, KEY_LAYOUT_0},
-  {S5(1, 2, 1, 3, 5), 0, KEY_LAYOUT_1},
-  {S5(1, 2, 1, 3, 4), 0, KEY_LAYOUT_NUM},
-  {S2(4, 2), 0, KEY_LEFT_SHIFT},
-  {S3(4, 3, 4), 0, KEY_TAB},
-  {S4(4, 3, 4, 2), 0, KEY_ESC},
-  {S3(3, 4, 3), 0, KEY_LEFT_CTRL},
-  {S3(4, 2, 4), 0, KEY_LEFT_ALT},
-  {S4(4, 2, 4, 6), 0, KEY_LEFT_GUI},
-  {S4(4, 2, 4, 3), 0, KEY_RESET_MODS},
+  {S2(2, 1), KEY_BACKSPACE},
+  {S4(2, 1, 2, 4), KEY_INSERT},
+  {S2(2, 4), KEY_RETURN},
+  {S2(4, 6), KEY_DOWN_ARROW},
+  {S3(4, 6, 4), KEY_PAGE_DOWN},
+  {S2(6, 4), KEY_UP_ARROW},
+  {S3(6, 4, 6), KEY_PAGE_UP},
+  {S2(6, 5), KEY_LEFT_ARROW},
+  {S4(6, 5, 6, 5), KEY_HOME},
+  {S2(5, 6), KEY_RIGHT_ARROW},
+  {S4(5, 6, 5, 6), KEY_END},
+  {S3(1, 2, 1), KEY_DELETE},
+  {S4(1, 2, 1, 3), KEY_LAYOUT_0},
+  {S5(1, 2, 1, 3, 5), KEY_LAYOUT_1},
+  {S5(1, 2, 1, 3, 4), KEY_LAYOUT_NUM},
+  {S2(4, 2), KEY_LEFT_SHIFT},
+  {S3(4, 3, 4), KEY_TAB},
+  {S4(4, 3, 4, 2), KEY_ESC},
+  {S3(3, 4, 3), KEY_LEFT_CTRL},
+  {S3(4, 2, 4), KEY_LEFT_ALT},
+  {S4(4, 2, 4, 6), KEY_LEFT_GUI},
+  {S4(4, 2, 4, 3), KEY_RESET_MODS},
 };
 
 #define CONTROLS_MODS sizeof(controls_mods) / 4
 const Chord controls_mods[] PROGMEM = {
-  {S3(2, 1, 2), 0, KEY_BACKSPACE},
-  {S3(1, 3, 1), 0, KEY_RETURN},
-  {S3(5, 6, 5), 0, KEY_RIGHT_ARROW},
-  {S3(6, 5, 6), 0, KEY_LEFT_ARROW},
-  {S4(4, 3, 4, 6), 0, KEY_TAB},
+  {S3(2, 1, 2), KEY_BACKSPACE},
+  {S3(1, 3, 1), KEY_RETURN},
+  {S3(5, 6, 5), KEY_RIGHT_ARROW},
+  {S3(6, 5, 6), KEY_LEFT_ARROW},
+  {S4(4, 3, 4, 6), KEY_TAB},
 };
 
 #define LED_LAYOUT LED_BUILTIN_RX
@@ -344,7 +345,7 @@ void release_mods() {
 bool chord_symbols(byte k) {
   bool result = false;
   byte l = layout;
-  if (mods & (~ ((KEY_LEFT_SHIFT - KEY_LEFT_CTRL) & (KEY_RIGHT_SHIFT - KEY_LEFT_CTRL)))) {
+  if (mods & (~ ((1 << (KEY_LEFT_SHIFT - KEY_LEFT_CTRL)) | (1 << (KEY_RIGHT_SHIFT - KEY_LEFT_CTRL))))) {
     l = 0;
   }
   for (byte i = 0; i < SYMBOLS; i ++) {
@@ -437,7 +438,7 @@ bool chord_controls(byte k) {
         Keyboard.press(modificator);
         Keyboard.write(symbol);
         Keyboard.release(modificator);
-        mods &= ~ (modificator - KEY_LEFT_CTRL);
+        mods &= ~ (1 << (modificator - KEY_LEFT_CTRL));
         led_layout(mods || layout != 0);
       } else if (multiple) {
         for (byte m = 0; m < multiple; m ++) {
@@ -494,7 +495,7 @@ bool chord_controls_mods(byte k) {
           Keyboard.write(symbol);
         }
         Keyboard.release(modificator);
-        mods &= ~ (modificator - KEY_LEFT_CTRL);
+        mods &= ~ (1 << (modificator - KEY_LEFT_CTRL));
         led_layout(mods || layout != 0);
       }
       break;
@@ -529,7 +530,7 @@ void chord_tabs(byte k) {
           Keyboard.press(KEY_LEFT_SHIFT);
           Keyboard.write(KEY_TAB);
           Keyboard.release(KEY_LEFT_SHIFT);
-          mods &= ~ (KEY_LEFT_SHIFT - KEY_LEFT_CTRL);
+          mods &= ~ (1 << (KEY_LEFT_SHIFT - KEY_LEFT_CTRL));
         } else if (symbol == KEY_ESC) {
           Keyboard.write(symbol);
           mode = LAYOUT;
