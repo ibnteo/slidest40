@@ -20,20 +20,9 @@ function startup() {
 	center.ctx = center.getContext("2d");
 	setevents(center);
 
-	console.log(window.innerWidth, window.innerHeight);
-	if (window.innerHeight > 700 && window.innerWidth > 700) {
-		center.style.display = 'block';
-		left.style.display = 'block';
-		right.style.display = 'block';
-	} else if (window.innerWidth > window.innerHeight) {
-		center.style.display = 'none';
-		left.style.display = 'block';
-		right.style.display = 'block';
-	} else {
-		center.style.display = 'block';
-		left.style.display = 'none';
-		right.style.display = 'none';
-	}
+	center.style.display = (window.innerWidth > 300 && window.innerHeight > 500) ? 'block' : 'none';
+	left.style.display = (window.innerWidth > 500) ? 'block' : 'none';
+	right.style.display = (window.innerWidth > 500) ? 'block' : 'none';
 
 	lang = localStorage.getItem('lang');
 	if (lang != 'ru' && lang != 'en') lang = 'en';
@@ -148,8 +137,9 @@ var t = {
 }; 
 function grid(el) {
 	var ctx = el.ctx;
-	var w = 200;
-	var h = 300;
+	var w = 170;
+	var h = 255;
+	const uc = true;
 
 	ctx.clearRect(0, 0, w, h);
 	ctx.textBaseline = 'middle';
@@ -166,7 +156,7 @@ function grid(el) {
 	var x0 = w/12;
 	var y0 = h/12;
 
-	ctx.fillStyle = '#dddddd';
+	ctx.fillStyle = '#eee';
 	text2(el, '1', w/2/2, h/3/2, 'center');
 	text2(el, '2', w-w/2/2, h/3/2, 'center');
 	text2(el, '3', w/2/2, h/2, 'center');
@@ -175,41 +165,41 @@ function grid(el) {
 	text2(el, '6', w-w/2/2, h-h/3/2, 'center');
 
 	var il = lang == 'en' ? 0 : 1;
-	ctx.fillStyle = '#000000';
-	text(el, t['1'][il].toUpperCase(), x0, y0, 'left');
-	text(el, t['12'][il].toUpperCase(), w/2-x0, y0, 'right');
-	text(el, t['13'][il].toUpperCase(), x0, h/3/2, 'left');
+	ctx.fillStyle = '#555';
+	text(el, uc ? t['1'][il].toUpperCase() : t['1'][il], x0, y0, 'left');
+	text(el, uc ? t['12'][il].toUpperCase() : t['12'][il], w/2-x0, y0, 'right');
+	text(el, uc ? t['13'][il].toUpperCase() : t['13'][il], x0, h/3/2, 'left');
 	text(el, t['135'][il], x0, h/3-y0, 'left');
 	text(el, t['124'][il], w/2-x0, h/3/2, 'right');
 	text(el, t['134'][il], w/2/2, h/3-y0, 'left');
-	text(el, t['2'][il].toUpperCase(), w-x0, y0, 'right');
+	text(el, uc ? t['2'][il].toUpperCase() : t['2'][il], w-x0, y0, 'right');
 	text(el, t['21'][il], w/2+x0, y0, 'left');
 	text(el, t['24'][il], w-x0, h/3/2, 'right');
 	text(el, t['246'][il], w-x0, h/3-y0, 'right');
 	text(el, t['2464'][il], w-x0-x0, h/3-y0-y0/3, 'right');
 	text(el, t['213'][il], w/2+x0, h/3/2, 'left');
 	text(el, t['243'][il], w-w/2/2, h/3-y0, 'right');
-	text(el, t['3'][il].toUpperCase(), x0, h/2, 'left');
-	text(el, t['31'][il].toUpperCase(), x0, h/3+y0, 'left');
-	text(el, t['35'][il].toUpperCase(), x0, h/3*2-y0, 'left');
-	text(el, t['34'][il].toUpperCase(), w/2-x0, h/2, 'right');
+	text(el, uc ? t['3'][il].toUpperCase() : t['3'][il], x0, h/2, 'left');
+	text(el, uc ? t['31'][il].toUpperCase() : t['31'][il], x0, h/3+y0, 'left');
+	text(el, uc ? t['35'][il].toUpperCase() : t['35'][il], x0, h/3*2-y0, 'left');
+	text(el, uc ? t['34'][il].toUpperCase() : t['34'][il], w/2-x0, h/2, 'right');
 	text(el, t['342'][il], w/2-x0, h/2-y0, 'right');
 	text(el, t['346'][il], w/2-x0, h/2+y0, 'right');
 	text(el, t['312'][il], w/2/2, h/2-y0, 'left');
 	text(el, t['356'][il], w/2/2, h/2+y0, 'left');
 	text(el, t['4'][il], w-x0, h/2, 'right');
-	text(el, t['43'][il].toUpperCase(), w/2+x0, h/2, 'left');
+	text(el, uc ? t['43'][il].toUpperCase() : t['43'][il], w/2+x0, h/2, 'left');
 	text(el, t['42'][il], w-x0, h/3+y0, 'right');
 	text(el, t['421'][il], w-w/2/2, h/3+y0, 'right');
 	text(el, t['431'][il], w/2+x0, h/3+y0, 'left');
 	text(el, t['435'][il], w/2+x0, h/3*2-y0, 'left');
 	text(el, t['465'][il], w-w/2/2, h/3*2-y0, 'right');
-	text(el, t['5'][il].toUpperCase(), x0, h-y0, 'left');
-	text(el, t['53'][il].toUpperCase(), x0, h-h/3/2, 'left');
+	text(el, uc ? t['5'][il].toUpperCase() : t['5'][il], x0, h-y0, 'left');
+	text(el, uc ? t['53'][il].toUpperCase() : t['53'][il], x0, h-h/3/2, 'left');
 	text(el, t['531'][il], x0, h/3*2+y0, 'left');
 	text(el, t['534'][il], w/2/2, h/3*2+y0, 'left');
 	text(el, t['564'][il], w/2-x0, h-h/3/2, 'right');
-	text(el, t['6'][il].toUpperCase(), w-x0, h-y0, 'right');
+	text(el, uc ? t['6'][il].toUpperCase() : t['6'][il], w-x0, h-y0, 'right');
 	text(el, t['642'][il], w-x0, h/3*2+y0, 'right');
 	text(el, t['643'][il], w-w/2/2, h/3*2+y0, 'right');
 	text(el, t['653'][il], w/2+x0, h-h/3/2, 'left');
@@ -241,7 +231,7 @@ function line1(el, x1, y1, x2, y2) {
 	ctx.moveTo(x1, y1);
 	ctx.lineTo(x2, y2);
 	ctx.lineWidth = 1;
-	ctx.strokeStyle = '#dddddd';
+	ctx.strokeStyle = '#eee';
 	ctx.stroke();
 }
 function line(el, x1, y1, x2, y2) {
@@ -250,7 +240,7 @@ function line(el, x1, y1, x2, y2) {
 	ctx.moveTo(x1, y1);
 	ctx.lineTo(x2, y2);
 	ctx.lineWidth = 2;
-	ctx.strokeStyle = '#aaaaaa';
+	ctx.strokeStyle = '#eee';
 	ctx.stroke();
 }
 function handleStart(evt) {
@@ -436,8 +426,8 @@ function copy() {
 </head>
 <body onload="startup()" onresize="startup();" style="padding:1rem; text-align:center;">
 	<div style="width:100%; max-width:300px; display:inline-block;"><textarea id="input" style="width:100%;" rows="7"></textarea><br><span style="color:#aaa;">Eng: 1213, Rus: 12135</span></div>
-	<canvas id="left" width="200" height="300" style="width:200px; height:300px; position:absolute; top:0; left:0;"></canvas>
-	<canvas id="right" width="200" height="300" style="width:200px; height:300px; position:absolute; top:0; right:0;"></canvas>
-	<canvas id="center" width="200" height="300" style="width:200px; height:300px; position:absolute; bottom:0; left:50%; margin-left:-100px;"></canvas>
+	<canvas id="left" width="170" height="255" style="width:170px; height:255px; position:absolute; top:0; left:0;"></canvas>
+	<canvas id="right" width="170" height="255" style="width:170px; height:255px; position:absolute; top:0; right:0;"></canvas>
+	<canvas id="center" width="170" height="255" style="width:170px; height:255px; position:absolute; bottom:0; left:50%; margin-left:-85px;"></canvas>
 </body>
 </html>
