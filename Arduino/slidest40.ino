@@ -1,6 +1,6 @@
 /*
    Touch slide keyboard Slidest40 (сенсорная слайдовая клавиатура Слайдость40)
-   Version: 0.8 pre-release
+   Version: 0.81 pre-release
    Date: 2020-05-19
    Description: https://github.com/ibnteo/slidest40 (soon)
    Author: Vladimir Romanovich <ibnteo@gmail.com>
@@ -86,6 +86,42 @@ struct ChordString4 {
 #define KEY_WINDOWS 0xFE
 #define KEY_MACOS 0xFD
 #define KEY_ANDROID 0xFC
+
+#define KEY_LAYOUT_0 255
+#define KEY_LAYOUT_1 254
+#define KEY_LAYOUT_NUM 253
+#define KEY_RESET_MODS 252
+byte layout = 0;
+byte mods = 0;
+#define LAYOUT 0
+#define LAYOUT_NUM 1
+#define LAYOUT_TAB 2
+byte mode = LAYOUT;
+
+#define LINUX_COMPOSE false
+#define LINUX   0
+#define WINDOWS 1
+#define MACOS   2
+#define ANDROID 3
+byte os = LINUX;
+void change_layout(byte layer) {
+  if (layout != layer) {
+    Keyboard.releaseAll();
+    if (os == MACOS || os == ANDROID) {
+      Keyboard.press(KEY_LEFT_GUI);
+      Keyboard.press(' ');
+    } else if (os == WINDOWS) {
+      Keyboard.press(KEY_LEFT_SHIFT);
+      Keyboard.press(KEY_LEFT_CTRL);
+    } else {
+      Keyboard.press(KEY_LEFT_SHIFT);
+      Keyboard.press(KEY_LEFT_ALT);
+    }
+    Keyboard.releaseAll();
+  }
+  layout = layer;
+  led_layout(layout != 0);
+}
 
 #define NUMERICS sizeof(numerics) / 4
 const Chord numerics[] PROGMEM = {
@@ -266,28 +302,17 @@ const ChordString macros[] = {
   {S3(6, 4, 2), "tion"},
 };
 
-#define LINUX_COMPOSE false
 #define UNICODE sizeof(unicode) / 27
 const ChordString4 unicode[] = {
   {S5(3, 1, 3, 5, 3), {"---", "2014", "", ""}},
   {S4(3, 1, 3, 1), {"", "2013", "", ""}},
   {S4(1, 3, 4, 3), {"oo", "00b0", "", ""}},
-  {S6(5, 6, 4, 3, 5, 3), {"<<", "00ab", "", ""}},
-  {S6(6, 5, 3, 4, 6, 4), {">>", "00bb", "", ""}},
+  {S6(5, 6, 4, 3, 5, 3), {"<<", "00ab", "0171", ""}},
+  {S6(6, 5, 3, 4, 6, 4), {">>", "00bb", "0187", ""}},
   {S5(5, 6, 4, 3, 4), {"-:", "00f7", "", ""}},
   {S6(4, 3, 1, 2, 4, 2), {"xx", "00d7", "", ""}},
 };
 
-#define KEY_LAYOUT_0 255
-#define KEY_LAYOUT_1 254
-#define KEY_LAYOUT_NUM 253
-#define KEY_RESET_MODS 252
-byte layout = 0;
-byte mods = 0;
-#define LAYOUT 0
-#define LAYOUT_NUM 1
-#define LAYOUT_TAB 2
-byte mode = LAYOUT;
 
 #define CONTROLS sizeof(controls) / 4
 const Chord controls[] PROGMEM = {
@@ -327,30 +352,6 @@ const Chord controls_mods[] PROGMEM = {
 #define LED_LAYOUT LED_BUILTIN_RX
 void led_layout(bool light) {
   digitalWrite(LED_LAYOUT, light ? LOW : HIGH); // LOW = light
-}
-
-#define LINUX   0
-#define WINDOWS 1
-#define MACOS   2
-#define ANDROID 3
-byte os = LINUX;
-void change_layout(byte layer) {
-  if (layout != layer) {
-    Keyboard.releaseAll();
-    if (os == MACOS || os == ANDROID) {
-      Keyboard.press(KEY_LEFT_GUI);
-      Keyboard.press(' ');
-    } else if (os == WINDOWS) {
-      Keyboard.press(KEY_LEFT_SHIFT);
-      Keyboard.press(KEY_LEFT_CTRL);
-    } else {
-      Keyboard.press(KEY_LEFT_SHIFT);
-      Keyboard.press(KEY_LEFT_ALT);
-    }
-    Keyboard.releaseAll();
-  }
-  layout = layer;
-  led_layout(layout != 0);
 }
 
 void release_mods() {
@@ -577,32 +578,40 @@ void chord_tabs(byte k) {
 bool chord_unicode(byte k) {
   bool result = false;
   if (os < 3) for (byte i = 0; i < UNICODE; i ++) {
-    if (touched.list[k].minor == unicode[i].minor && touched.list[k].major == unicode[i].major) {
-      result = true;
-      byte o = os + 1;
-      if (os == LINUX && LINUX_COMPOSE) o --;
-      String string = unicode[i].string[o];
-      if (string != "") {
-        Serial.println(string);
-        if (os == LINUX && LINUX_COMPOSE) { // Compose (Right Win)
-          Keyboard.press(KEY_RIGHT_GUI);
-          Keyboard.print(string);
-          Keyboard.releaseAll();
-          led_layout(layout != 0);
-        } else if (os == LINUX) { // Ctrl+U <code> <Enter>
-          Keyboard.releaseAll();
-          Keyboard.press(KEY_LEFT_CTRL);
-          Keyboard.write('U');
-          Keyboard.releaseAll();
-          Keyboard.print(string);
-          Keyboard.write(KEY_RETURN);
-          led_layout(layout != 0);
+      if (touched.list[k].minor == unicode[i].minor && touched.list[k].major == unicode[i].major) {
+        result = true;
+        byte o = os + 1;
+        if (os == LINUX && LINUX_COMPOSE) o --;
+        String string = unicode[i].string[o];
+        if (string != "") {
+          if (os == LINUX && LINUX_COMPOSE) { // Compose (Right Win)
+            Keyboard.press(KEY_RIGHT_GUI);
+            Keyboard.print(string);
+            Keyboard.releaseAll();
+            led_layout(layout != 0);
+          } else if (os == LINUX) { // Ctrl+U <code> <Enter>
+            Keyboard.releaseAll();
+            Keyboard.press(KEY_LEFT_CTRL);
+            Keyboard.write('U');
+            Keyboard.releaseAll();
+            Keyboard.print(string);
+            Keyboard.write(KEY_RETURN);
+            led_layout(layout != 0);
+          } else if (os == WINDOWS) { // Alt+<code-NumBlock>
+            Keyboard.releaseAll();
+            Keyboard.press(KEY_RIGHT_ALT);
+            for (byte i = 0; i < string.length(); i++) {
+              byte s = string.charAt(i) - '1' + KEYPAD_1;
+              if (s < KEYPAD_1 || s > KEYPAD_9) s = KEYPAD_0;
+              Keyboard.write(s);
+            }
+            Keyboard.releaseAll();
+          }
+          // TODO: Macos
         }
-        // TODO: Windows, Macos
+        break;
       }
-      break;
     }
-  }
   return result;
 }
 
