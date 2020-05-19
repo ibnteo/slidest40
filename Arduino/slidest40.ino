@@ -1,7 +1,7 @@
 /*
    Touch slide keyboard Slidest40 (сенсорная слайдовая клавиатура Слайдость40)
-   Version: 0.71 pre-release
-   Date: 2020-05-15
+   Version: 0.8 pre-release
+   Date: 2020-05-19
    Description: https://github.com/ibnteo/slidest40 (soon)
    Author: Vladimir Romanovich <ibnteo@gmail.com>
    License: MIT
@@ -44,6 +44,12 @@ struct ChordString {
   word minor;
   byte major;
   String macros;
+};
+
+struct ChordString4 {
+  word minor;
+  byte major;
+  String string[4];
 };
 
 #define S1(s1) s1, 0
@@ -250,7 +256,6 @@ const Chord2 symbols[] PROGMEM = {
   {S7(6, 5, 3, 4, 6, 5, 3), KEYPAD_ASTERIX},
 };
 
-// Macros
 #define MACROS sizeof(macros) / 9
 const ChordString macros[] = {
   {S3(2, 4, 6), "you"},
@@ -259,6 +264,18 @@ const ChordString macros[] = {
   {S3(4, 3, 1), "ough"},
   {S3(4, 3, 5), "ght"},
   {S3(6, 4, 2), "tion"},
+};
+
+#define LINUX_COMPOSE false
+#define UNICODE sizeof(unicode) / 27
+const ChordString4 unicode[] = {
+  {S5(3, 1, 3, 5, 3), {"---", "2014", "", ""}},
+  {S4(3, 1, 3, 1), {"", "2013", "", ""}},
+  {S4(1, 3, 4, 3), {"oo", "00b0", "", ""}},
+  {S6(5, 6, 4, 3, 5, 3), {"<<", "00ab", "", ""}},
+  {S6(6, 5, 3, 4, 6, 4), {">>", "00bb", "", ""}},
+  {S5(5, 6, 4, 3, 4), {"-:", "00f7", "", ""}},
+  {S6(4, 3, 1, 2, 4, 2), {"xx", "00d7", "", ""}},
 };
 
 #define KEY_LAYOUT_0 255
@@ -354,7 +371,17 @@ bool chord_symbols(byte k) {
         for (byte j = 0; j < MACROS; j ++) {
           if (touched.list[k].minor == macros[j].minor && touched.list[k].major == macros[j].major) {
             release_mods();
-            Keyboard.print(macros[j].macros);
+            if (macros[j].macros == "tion") {
+              Keyboard.press(KEY_LEFT_CTRL);
+              Keyboard.press(KEY_LEFT_SHIFT);
+              Keyboard.write('u');
+              Keyboard.release(KEY_LEFT_SHIFT);
+              Keyboard.release(KEY_LEFT_CTRL);
+              Keyboard.print("0409");
+              Keyboard.write(KEY_RETURN);
+            } else {
+              Keyboard.print(macros[j].macros);
+            }
             result = true;
             break;
           }
@@ -547,13 +574,45 @@ void chord_tabs(byte k) {
   }
 }
 
+bool chord_unicode(byte k) {
+  bool result = false;
+  if (os < 3) for (byte i = 0; i < UNICODE; i ++) {
+    if (touched.list[k].minor == unicode[i].minor && touched.list[k].major == unicode[i].major) {
+      result = true;
+      byte o = os + 1;
+      if (os == LINUX && LINUX_COMPOSE) o --;
+      String string = unicode[i].string[o];
+      if (string != "") {
+        Serial.println(string);
+        if (os == LINUX && LINUX_COMPOSE) { // Compose (Right Win)
+          Keyboard.press(KEY_RIGHT_GUI);
+          Keyboard.print(string);
+          Keyboard.releaseAll();
+          led_layout(layout != 0);
+        } else if (os == LINUX) { // Ctrl+U <code> <Enter>
+          Keyboard.releaseAll();
+          Keyboard.press(KEY_LEFT_CTRL);
+          Keyboard.write('U');
+          Keyboard.releaseAll();
+          Keyboard.print(string);
+          Keyboard.write(KEY_RETURN);
+          led_layout(layout != 0);
+        }
+        // TODO: Windows, Macos
+      }
+      break;
+    }
+  }
+  return result;
+}
+
 void press(byte k) { // Press on release
   if (mode == LAYOUT_TAB) {
     chord_tabs(k);
   } else if (mode == LAYOUT_NUM) {
-    chord_numerics(k) & chord_controls(k) & chord_controls_mods(k);
+    chord_numerics(k) || chord_controls(k) || chord_controls_mods(k);
   } else {
-    chord_symbols(k) & chord_controls(k) & chord_controls_mods(k);
+    chord_symbols(k) || chord_controls(k) || chord_controls_mods(k) || chord_unicode(k);
   }
 }
 
