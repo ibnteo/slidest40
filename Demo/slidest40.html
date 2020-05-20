@@ -8,21 +8,23 @@
 <script>
 var left, right, center;
 function startup() {
-	left = document.getElementById("left");
-	left.ctx = left.getContext("2d");
+	left = document.getElementById('left');
+	left.ctx = left.getContext('2d');
 	setevents(left);
 
-	right = document.getElementById("right");
-	right.ctx = right.getContext("2d");
+	right = document.getElementById('right');
+	right.ctx = right.getContext('2d');
 	setevents(right);
 
-	center = document.getElementById("center");
-	center.ctx = center.getContext("2d");
+	center = document.getElementById('center');
+	center.ctx = center.getContext('2d');
 	setevents(center);
 
-	center.style.display = (window.innerWidth > 300 && window.innerHeight > 500) ? 'block' : 'none';
+	center.style.display = (window.innerWidth > 300 && window.innerHeight > 400) ? 'block' : 'none';
 	left.style.display = (window.innerWidth > 500) ? 'block' : 'none';
 	right.style.display = (window.innerWidth > 500) ? 'block' : 'none';
+
+	document.getElementById('text').style.maxWidth = (window.innerWidth > 500 ? window.innerWidth - 420 : window.innerWidth - 20) + 'px';
 
 	lang = localStorage.getItem('lang');
 	if (lang != 'ru' && lang != 'en') lang = 'en';
@@ -31,15 +33,15 @@ function startup() {
 	grid(center);
 }
 function setevents(el) {
-	el.addEventListener("touchstart", handleStart, false);
-	el.addEventListener("touchend", handleEnd, false);
-	el.addEventListener("touchcancel", handleCancel, false);
-	el.addEventListener("touchmove", handleMove, false);
+	el.addEventListener('touchstart', handleStart, false);
+	el.addEventListener('touchend', handleEnd, false);
+	el.addEventListener('touchcancel', handleCancel, false);
+	el.addEventListener('touchmove', handleMove, false);
 
-	el.addEventListener("mousedown", handleStart, false);
-	el.addEventListener("mouseup", handleEnd, false);
-	el.addEventListener("mousemove", handleMove, false);
-	el.addEventListener("mouseover", handleCancel, false);
+	el.addEventListener('mousedown', handleStart, false);
+	el.addEventListener('mouseup', handleEnd, false);
+	el.addEventListener('mousemove', handleMove, false);
+	el.addEventListener('mouseover', handleCancel, false);
 }
 var shift = false;
 var caps = false;
@@ -59,6 +61,7 @@ var t = {
 	'21': ['Bsp', 'Bsp'],
 	'212': ['CBsp', 'CBsp'],
 	'24': ['Ent', 'Ent'],
+	'242': ['CEnt', 'CEnt'],
 	'213': ['d', 'д'],
 	'243': ['b', 'б'],
 	'246': ['you', 'щ'],
@@ -72,20 +75,20 @@ var t = {
 	'356': ['y', 'ь'],
 	'42': ['Sh', 'Sh'],
 	'43': ['l', 'л'],
-	//'46': ['Down', 'Down'],
+	'46': ['Dn', 'Dn'],
 	'431': ['ough', 'ю'],
 	'421': ['u', 'у'],
 	'435': ['ght', 'ё'],
 	'465': ['q', 'э'],
 	'53': ['c', 'к'],
-	//'56': ['Right', 'Right'],
-	//'565': ['CRight', 'CRight'],
+	'56': ['Rt', 'Rt'],
+	'565': ['CRt', 'CRt'],
 	'531': ['z', 'з'],
 	'534': ['x', 'х'],
 	'564': ['v', 'ж'],
-	//'65': ['Left', 'Left'],
-	//'656': ['CLeft', 'CLeft'],
-	//'64': ['Up', 'Up'],
+	'65': ['Lf', 'Lf'],
+	'656': ['CLf', 'CLf'],
+	'64': ['Up', 'Up'],
 	'642': ['tion', 'ц'],
 	'643': ['g', 'г'],
 	'653': ['p', 'п'],
@@ -132,8 +135,8 @@ var t = {
 	'5356': ['\'', '\''],
 	'5313': ['`', '`'],
 	'53135': ['~', '~'],
-	'1213': ['Eng', 'Eng'],
-	'12135': ['Rus', 'Rus'],
+	'3431': ['Eng', 'Eng'],
+	'3435': ['Rus', 'Rus'],
 	'3131': ['–', '–'],
 	'31353': ['—', '—'],
 	'564353': ['«', '«'],
@@ -142,11 +145,10 @@ var t = {
 	'56434': ['÷', '÷'],
 	'1343': ['°', '°'],
 }; 
+const w = 170;
+const h = 255;
 function grid(el) {
 	var ctx = el.ctx;
-	var w = 170;
-	var h = 255;
-	const uc = true;
 
 	ctx.clearRect(0, 0, w, h);
 	ctx.textBaseline = 'middle';
@@ -160,8 +162,8 @@ function grid(el) {
 	line(el, 0, h/3*2, w, h/3*2);
 	line(el, w/2, 0, w/2, h);
 
-	var x0 = w/12;
-	var y0 = h/12;
+	var x0 = w/15;
+	var y0 = h/15;
 
 	ctx.fillStyle = '#eee';
 	text2(el, '1', w/2/2, h/3/2, 'center');
@@ -173,44 +175,126 @@ function grid(el) {
 
 	var il = lang == 'en' ? 0 : 1;
 	ctx.fillStyle = '#555';
-	text(el, uc ? t['1'][il].toUpperCase() : t['1'][il], x0, y0, 'left');
-	text(el, uc ? t['12'][il].toUpperCase() : t['12'][il], w/2-x0, y0, 'right');
-	text(el, uc ? t['13'][il].toUpperCase() : t['13'][il], x0, h/3/2, 'left');
+
+	text(el, t['1'][il], x0, y0, 'left');
+	text(el, t['12'][il], w/2-x0, y0, 'right');
+	text(el, t['13'][il], x0, h/3/2, 'left');
 	text(el, t['135'][il], x0, h/3-y0, 'left');
 	text(el, t['124'][il], w/2-x0, h/3/2, 'right');
 	text(el, t['134'][il], w/2/2, h/3-y0, 'left');
-	text(el, uc ? t['2'][il].toUpperCase() : t['2'][il], w-x0, y0, 'right');
+	text(el, t['2'][il], w-x0, y0, 'right');
 	text(el, t['21'][il], w/2+x0, y0, 'left');
 	text(el, t['24'][il], w-x0, h/3/2, 'right');
 	text(el, t['246'][il], w-x0, h/3-y0, 'right');
-	text(el, t['2464'][il], w-x0-x0, h/3-y0-y0/3, 'right');
+	text(el, t['2464'][il], w-x0, h/3-y0-y0/1.5, 'right');
 	text(el, t['213'][il], w/2+x0, h/3/2, 'left');
 	text(el, t['243'][il], w-w/2/2, h/3-y0, 'right');
-	text(el, uc ? t['3'][il].toUpperCase() : t['3'][il], x0, h/2, 'left');
-	text(el, uc ? t['31'][il].toUpperCase() : t['31'][il], x0, h/3+y0, 'left');
-	text(el, uc ? t['35'][il].toUpperCase() : t['35'][il], x0, h/3*2-y0, 'left');
-	text(el, uc ? t['34'][il].toUpperCase() : t['34'][il], w/2-x0, h/2, 'right');
+	text(el, t['3'][il], x0, h/2, 'left');
+	text(el, t['31'][il], x0, h/3+y0, 'left');
+	text(el, t['35'][il], x0, h/3*2-y0, 'left');
+	text(el, t['34'][il], w/2-x0, h/2, 'right');
 	text(el, t['342'][il], w/2-x0, h/2-y0, 'right');
 	text(el, t['346'][il], w/2-x0, h/2+y0, 'right');
-	text(el, t['312'][il], w/2/2, h/2-y0, 'left');
-	text(el, t['356'][il], w/2/2, h/2+y0, 'left');
+	text(el, t['312'][il], w/2/2, h/2-y0-y0/2, 'left');
+	text(el, t['356'][il], w/2/2, h/2+y0+y0/2, 'left');
 	text(el, t['4'][il], w-x0, h/2, 'right');
-	text(el, uc ? t['43'][il].toUpperCase() : t['43'][il], w/2+x0, h/2, 'left');
+	text(el, t['43'][il], w/2+x0, h/2, 'left');
 	text(el, t['42'][il], w-x0, h/3+y0, 'right');
 	text(el, t['421'][il], w-w/2/2, h/3+y0, 'right');
-	text(el, t['431'][il], w/2+x0, h/3+y0, 'left');
-	text(el, t['435'][il], w/2+x0, h/3*2-y0, 'left');
+	text(el, t['431'][il], w/2+x0, h/3+y0+y0/2, 'left');
+	text(el, t['435'][il], w/2+x0, h/2+y0, 'left');
 	text(el, t['465'][il], w-w/2/2, h/3*2-y0, 'right');
-	text(el, uc ? t['5'][il].toUpperCase() : t['5'][il], x0, h-y0, 'left');
-	text(el, uc ? t['53'][il].toUpperCase() : t['53'][il], x0, h-h/3/2, 'left');
+	text(el, t['46'][il], w-x0, h/3*2-y0, 'right');
+	text(el, t['5'][il], x0, h-y0, 'left');
+	text(el, t['53'][il], x0, h-h/3/2, 'left');
 	text(el, t['531'][il], x0, h/3*2+y0, 'left');
 	text(el, t['534'][il], w/2/2, h/3*2+y0, 'left');
+	text(el, t['56'][il], w/2-x0, h-y0, 'right');
 	text(el, t['564'][il], w/2-x0, h-h/3/2, 'right');
-	text(el, uc ? t['6'][il].toUpperCase() : t['6'][il], w-x0, h-y0, 'right');
+	text(el, t['6'][il], w-x0, h-y0, 'right');
+	text(el, t['64'][il], w-x0, h-h/3/2, 'right');
 	text(el, t['642'][il], w-x0, h/3*2+y0, 'right');
 	text(el, t['643'][il], w-w/2/2, h/3*2+y0, 'right');
 	text(el, t['653'][il], w/2+x0, h-h/3/2, 'left');
+	text(el, t['65'][il], w/2+x0, h-y0, 'left');
+}
+function grid2(el, p) {
+	var ctx = el.ctx;
 
+	ctx.clearRect(0, 0, w, h);
+	ctx.textBaseline = 'middle';
+
+	line(el, 1, 1, w-1, 1);
+	line(el, w-1, 1, w-1, h-1);
+	line(el, w-1, h-1, 1, h-1);
+	line(el, 1, h, 1, -1);
+
+	line(el, 0, h/3, w, h/3);
+	line(el, 0, h/3*2, w, h/3*2);
+	line(el, w/2, 0, w/2, h);
+
+	var x0 = w/15;
+	var y0 = h/15;
+
+	ctx.fillStyle = '#eee';
+	text2(el, '1', w/2/2, h/3/2, 'center');
+	text2(el, '2', w-w/2/2, h/3/2, 'center');
+	text2(el, '3', w/2/2, h/2, 'center');
+	text2(el, '4', w-w/2/2, h/2, 'center');
+	text2(el, '5', w/2/2, h-h/3/2, 'center');
+	text2(el, '6', w-w/2/2, h-h/3/2, 'center');
+
+	var il = lang == 'en' ? 0 : 1;
+	ctx.fillStyle = '#555';
+
+	if (p == 1) {
+		text(el, t['1'][il], x0, y0, 'left');
+		text(el, t['12'][il], w/2+x0, y0, 'left');
+		text(el, t['13'][il], x0, h/3+y0, 'left');
+		text(el, t['135'][il], x0, h/3*2+y0, 'left');
+		text(el, t['134'][il], w/2+x0, h/3+y0+y0/2, 'left');
+		text(el, t['124'][il], w-w/2/2, h/3+y0, 'right');
+	} else if (p == 2) {
+		text(el, t['2'][il], w-x0, y0, 'right');
+		text(el, t['21'][il], w/2-x0, y0, 'right');
+		text(el, t['24'][il], w-x0, h/3+y0, 'right');
+		text(el, t['246'][il], w-x0, h/3*2+y0, 'right');
+		text(el, t['2464'][il], w-x0, h/3*2-y0, 'right');
+		text(el, t['213'][il], w/2/2, h/2-y0-y0/2, 'left');
+		text(el, t['243'][il], w/2-x0, h/2-y0, 'right');
+	} else if (p == 3) {
+		text(el, t['3'][il], x0, h/2, 'left');
+		text(el, t['31'][il], x0, h/3-y0, 'left');
+		text(el, t['35'][il], x0, h/3*2+y0, 'left');
+		text(el, t['34'][il], w/2+x0, h/2, 'left');
+		text(el, t['312'][il], w/2+x0, h/3/2, 'left');
+		text(el, t['342'][il], w-w/2/2, h/3-y0, 'right');
+		text(el, t['346'][il], w-w/2/2, h/3*2+y0, 'right');
+		text(el, t['356'][il], w/2+x0, h-h/3/2, 'left');
+	} else if (p == 4) {
+		text(el, t['4'][il], w-x0, h/2, 'right');
+		text(el, t['43'][il], w/2-x0, h/2, 'right');
+		text(el, t['42'][il], w-x0, h/3-y0, 'right');
+		text(el, t['46'][il], w-x0, h/3*2+y0, 'right');
+		text(el, t['421'][il], w/2-x0, h/3/2, 'right');
+		text(el, t['431'][il], w/2/2, h/3-y0, 'left');
+		text(el, t['435'][il], w/2/2, h/3*2+y0, 'left');
+		text(el, t['465'][il], w/2-x0, h-h/3/2, 'right');
+	} else if (p == 5) {
+		text(el, t['5'][il], x0, h-y0, 'left');
+		text(el, t['53'][il], x0, h/3*2-y0, 'left');
+		text(el, t['531'][il], x0, h/3-y0, 'left');
+		text(el, t['56'][il], w/2+x0, h-y0, 'left');
+		text(el, t['534'][il], w/2+x0, h/2+y0, 'left');
+		text(el, t['564'][il], w-w/2/2, h/3*2-y0, 'right');
+	} else if (p == 6) {
+		text(el, t['6'][il], w-x0, h-y0, 'right');
+		text(el, t['64'][il], w-x0, h/3*2-y0, 'right');
+		text(el, t['65'][il], w/2-x0, h-y0, 'right');
+		text(el, t['642'][il], w-x0, h/3-y0, 'right');
+		text(el, t['643'][il], w/2-x0, h/2+y0, 'right');
+		text(el, t['653'][il], w/2/2, h/2+y0+y0/2, 'left');
+	}
 }
 function text(el, text, x, y, align) {
 	var ctx = el.ctx;
@@ -218,9 +302,11 @@ function text(el, text, x, y, align) {
 	ctx.moveTo(x, y);
 	ctx.textAlign = align;
 	var s = el.clientWidth/10;
-	if (text.length>1) s = el.clientWidth/12;
-	if (text.length>2) s = el.clientWidth/20;
-	ctx.font = ((shift && text == 'Sh') ? 'bold ' : '')+s+'px sans-serif';
+	//if (text.length>1) s = el.clientWidth/12;
+	if (text.length>1) s = el.clientWidth/16;
+	//ctx.font = ((shift && text == 'Sh') ? 'bold ' : '')+s+'px sans-serif';
+	ctx.font = s+'px sans-serif';
+	if (shift && text.length == 1) text = text.toUpperCase();
 	ctx.fillText(text, x, y);
 }
 function text2(el, text, x, y, align) {
@@ -270,6 +356,7 @@ function handleStart(evt) {
 		var y = y2*c < el.width/2 ? 0 : (y2*c < el.width ? 1 : 2);
 		var p = y*2+x+1;
 		el.sectors = [p];
+		grid2(el, p);
 		ctx.beginPath();
 		ctx.arc(x2*c, y2, 4, 0, 2 * Math.PI, false);
 		ctx.fillStyle = color;
@@ -384,8 +471,14 @@ function press(s) {
 	} else if (s == 'Copy') {
 		copy();
 		shift = false;
-	} else if (s == 'Ent') {
+	} else if (s == 'Ent' || s == 'CEnt') {
 		print('\n');
+	} else if (s == 'Lf') {
+	} else if (s == 'Rt') {
+	} else if (s == 'Up') {
+	} else if (s == 'Dn') {
+	} else if (s == 'CLf') {
+	} else if (s == 'CRt') {
 	} else {
 		print(shift ? s.toUpperCase() : s);
 		shift = false;
@@ -432,7 +525,7 @@ function copy() {
 </script>
 </head>
 <body onload="startup()" onresize="startup();" style="padding:1rem; text-align:center;">
-	<div style="width:100%; max-width:300px; display:inline-block;"><textarea id="input" style="width:100%;" rows="7"></textarea><br><span style="color:#aaa;">Eng: 1213, Rus: 12135</span></div>
+	<div id="text" style="width:100%; max-width:280px; display:inline-block;"><textarea id="input" placeholder="Slidest" style="width:100%;" rows="7"></textarea><br><span style="color:#aaa;">Eng: 3431, Rus: 3435</span></div>
 	<canvas id="left" width="170" height="255" style="width:170px; height:255px; position:absolute; top:0; left:0;"></canvas>
 	<canvas id="right" width="170" height="255" style="width:170px; height:255px; position:absolute; top:0; right:0;"></canvas>
 	<canvas id="center" width="170" height="255" style="width:170px; height:255px; position:absolute; bottom:0; left:50%; margin-left:-85px;"></canvas>
